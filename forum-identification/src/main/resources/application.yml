@@ -1,0 +1,26 @@
+server:
+  port: 8101
+spring:
+  application:
+    name: forum-identification
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+  redis:
+    host: localhost
+  session:
+    store-type: redis
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8100/eureka
+#short:
+#  message:
+#    app-code: 33f9ec5f35cb45238ef6a9559873aaea
+#    host: https://smsmsgs.market.alicloudapi.com
+#    path: /sms/
+#    sign: 151003
+#    skin: 84683
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000

@@ -7,7 +7,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="forum" />
+        <module name="forum-post" />
+        <module name="forum-common" />
+        <module name="forum-identification" />
+        <module name="forum-user" />
+        <module name="forum-eureca" />
+        <module name="forum-personal" />
+        <module name="forum-zuul" />
       </profile>
     </annotationProcessing>
   </component>

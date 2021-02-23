@@ -1,0 +1,30 @@
+server:
+  port: 8105 # 为了让访问效果更加逼真，直接设置为默认端口80
+spring:
+  application:
+    name: forum-zuul
+  session:
+    store-type: redis
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8100/eureka
+zuul:
+  ignored-services: "*"
+  sensitive-headers: "*"  # 在Zuul向其他微服务重定向时保持原本头信息（请求头、响应头）
+  routes:
+    forum-identification:
+      service-id: forum-identification
+      path: /** # 这里一定要使用两个“*”号，不然“/”路径后面的多层路径将无法访问，各种样式之类的静态文件也就无法加载
+    forum-personal:
+      service-id: forum-personal
+      path: /personal/**
+    forum-post:
+      service-id: forum-post
+      path: /post/**
+    forum-user:
+      service-id: forum-user
+      path: /user/**
+ribbon:
+  ReadTimeout: 10000
+  ConnectTimeout: 10000
