@@ -6,15 +6,26 @@ spring:
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html
-  redis:
-    host: localhost
-  session:
-    store-type: redis
-
+    cache: false
+#  devtools:
+#    restart:
+#      enabled: true
+  #  redis:
+#    host: localhost
+#  session:
+#    store-type: redis
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:///forum?useSSL=false&&serverTimezone=UTC
+    username: root
+    password: 123456
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8100/eureka
+
+mybatis-plus:
+  mapper-locations: classpath*:mapper/*Mapper.xml
 #aliyun:
 #  oss:
 #    access-key-id: LTAI4G3Hx2BRMMsqMV6iQ7gV

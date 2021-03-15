@@ -7,7 +7,7 @@ spring:
     store-type: redis
 eureka:
   client:
-    service-url:
+    ser`vice-url:
       defaultZone: http://localhost:8100/eureka
 zuul:
   ignored-services: "*"

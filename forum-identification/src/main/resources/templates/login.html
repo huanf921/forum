@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <base th:href="@{/}"/>
+        <title>login</title>
+        <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+        <style>
+    .icon {
+        width: 1.3em;
+        height: 1.3em;
+        vertical-align: -0.3em;
+        fill: currentColor;
+        overflow: hidden;
+    }
+    .color{
+        width: 100%;
+        background-color: #ededed;
+    }
+    hr{
+        margin: 0;
+
+    }
+    input{
+        background-color: transparent;
+        border: 0;
+        text-indent:33px;
+        width: 100%;
+    }
+    .input1{
+        background: url(img/u.png) no-repeat 10px 11px;
+        text-indent:33px;
+    }
+    .input2{
+        background: url(img/p.png) no-repeat 10px 11px;
+        text-indent:33px;
+    }
+    .input3{
+        background: url(img/m.png) no-repeat 0px 0px;
+        text-indent:100px;
+    }
+    label{
+        color: #00A0E4;
+        font-size: 18px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 36px;
+        position: absolute;
+        left: 20px;
+        cursor: pointer;
+    }
+    .header{
+        width: 100%;
+        height: 37px;
+        position: relative;
+        border-bottom:1px solid #999999;
+    }
+
+    .center{ 
+        width: 100%;
+        height: 100%;
+        display: -webkit-flex; /* Safari */
+        display: flex;
+        justify-content:center ;
+        align-items:center;
+    }
+
+    /* 动画效果 */
+    @-webkit-keyframes fadeIn {
+	0% {
+	opacity: 0; /*初始状态 透明度为0*/
+	}
+	100% {
+		opacity: 1; /*结尾状态 透明度为1*/
+	}
+    }
+    @-webkit-keyframes fadeNO {
+	0% {
+	    opacity: 1; /*初始状态 透明度为0*/
+	}
+	100% {
+		opacity: 0; /*结尾状态 透明度为1*/
+	}
+    }
+    .window{
+        position: absolute;
+        display: none;
+        margin-left:-100px;
+        background-color: aliceblue;
+        width: 260px;
+        height: 50px;
+        left: 50%;
+        border-radius:10px ;
+        color: #00A0E4;
+        font-size: 21px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 46px;
+        text-align: center;
+    }
+    .window1{
+        position: absolute;
+        left: 45%;
+        -webkit-animation-name: fadeIn; /*动画名称*/
+        -webkit-animation-duration: 2s; /*动画持续时间*/
+        -webkit-animation-iteration-count: 1; /*动画次数*/
+        -webkit-animation-delay: 0s; /*延迟时间*/
+
+        -webkit-animation-name: fadeNO; /*动画名称*/
+        -webkit-animation-duration: 2s; /*动画持续时间*/
+        -webkit-animation-iteration-count: 1; /*动画次数*/
+        -webkit-animation-delay: 4s; /*延迟时间*/
+    }
+    .centerIn{
+        width: 330px;
+        height: 370px;
+        background-color: white;
+        border-radius: 5px;
+        display: -webkit-flex; /* Safari */
+        display: flex;
+        justify-content:center ;
+        align-items:center;
+        flex-direction:column;
+        position: relative;
+        /* align-content: space-around; */
+    }
+    .on{
+        width: 266px;
+        height: 38px;
+        border-radius: 5px;
+        display: -webkit-flex; /* Safari */
+        display: flex;
+        border:1px solid #bbbbbb;
+        margin: 10px 0;
+    }
+    .logo{
+        color: #00A0E4;
+        font-size: 24px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        position: absolute;
+        left: 35px;
+        top: 40px;
+    }
+    .centerbottom{
+        width: 268px;
+        height: 65px;
+        position: absolute;
+        left: 29px;
+        top: 288px;
+    }
+    .go{
+        width: 268px;
+        height: 42px;
+        background-color: #00A0E4;
+        border-radius: 7px;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        display: -webkit-flex; /* Safari */
+        display: flex;
+        justify-content:center ;
+        align-items:center;
+        cursor: pointer;
+    }
+    .go p{
+        color: #ffffff;
+        margin-top: 8px;
+        font-size: 16px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .huan{
+        color: #00A0E4;
+        font-size: 12px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        cursor: pointer;
+    }
+    .huan:hover{
+        text-decoration: underline;
+    }
+    .bottom{
+        width: 100%;
+        text-align: center;
+    }
+        </style>
+    </head>
+    <body class="color">
+            <div class="header">
+                <div class="tbody1" @click="toDetail">
+                    <label>
+                    <svg class="icon" aria-hidden="true">
+                        <use xlink:href="#icon-gouwuche1"></use>
+                    </svg>
+                        XX博客
+                    </label>
+                </div>  
+            </div>
+            <div class="alert alert-warning alert-dismissable window1">
+                <button type="button" class="close" data-dismiss="alert"
+                        aria-hidden="true">
+                    &times;
+                </button>
+                警告！请不要提交。
+            </div>
+            <div class="center" ref="abc">
+                <div  class="centerIn">
+                    <div class="logo">
+                        <svg class="icon" aria-hidden="true">
+                            <use xlink:href="#icon-gouwuche1"></use>
+                        </svg>
+                        XX博客
+                    </div>
+                    <div class="on">
+                        <input v-model="n1" id="input1" placeholder="请输入账号" type="text" class="input1">
+                    </div>
+                    <div class="on">
+                        <input v-model="n2" id="input2" placeholder="请输入密码" type="password" class="input2">
+                    </div>
+                    <div class="on">
+                        <input v-model="n3" id="input3" placeholder="请再次输入验证码" :type="what=='t1'?'text':'password'" class="input3">
+                    </div>
+                    <div class="centerbottom">
+                        <div class="go" id="go">
+                            <p>登录</p>
+                        </div>
+                        <div id="huan" class="huan">
+                            立刻注册！
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom">
+                Copyright © 2020 XXX有限公司 渝ICP备11234567号
+            </div>
+    </body>
+    <script src='/iconfont.js'></script>
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>+
+    <script>
+        var n=1;
+        $(document).ready(function(){
+            var y=$(window).height();
+            if(y<329)
+            {
+            }else{
+                var a=(y-77)+'px';
+                $('body').height(a)
+            }
+        });
+        $("#huan").click(function(){
+            if(n==1){
+                $('#huan').text('已有账号？ 立刻登录')
+                $('#go>p').text('免费注册')
+                $("#input1,#input2,#input3").val("");
+                $('#input1').attr('placeholder',"请输入注册账号");
+	            $('#input2').attr('placeholder',"请输入注册密码");
+                $('#input3').attr('placeholder',"请再次输入注册密码");
+                $('#input3').attr('type','password');
+                $('#input3').removeClass('input3');
+                $('#input3').addClass('input2');
+                n=2;
+            }else{
+                $('#huan').text('立刻注册！');
+                $('#go>p').text('免费注册')
+                $("#input1,#input2,#input3").val("");
+                $('#input1').attr('placeholder',"请输入账号");
+	            $('#input2').attr('placeholder',"请输入密码");
+                $('#input3').attr('placeholder',"请再次输入验证码");
+                $('#input3').attr('type','text');
+                $('#input3').removeClass('input2');
+                $('#input3').addClass('input3');
+                n=1;
+            }
+            
+          });
+        $("#go").click(function(){
+            alert('112');
+          });
+    </script>
+</html>

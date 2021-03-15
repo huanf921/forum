@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="forum-post" />
         <module name="forum-common" />
+        <module name="forum-api" />
         <module name="forum-identification" />
         <module name="forum-user" />
         <module name="forum-eureca" />
