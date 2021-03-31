@@ -40,6 +40,11 @@ public class UserDetail extends Model<UserDetail> {
     private String sex;
 
     /**
+     * 用户手机号
+     */
+    private Integer phone;
+
+    /**
      * 用户头像地址
      */
     private String headUrl;
@@ -58,6 +63,11 @@ public class UserDetail extends Model<UserDetail> {
      * 用户邮箱
      */
     private String email;
+
+    /**
+     * 粉丝数
+     */
+    private Integer fans;
 
     /**
      * 总访问量(论贴+空间)

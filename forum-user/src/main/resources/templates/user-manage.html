@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>用户个人管理</title>
+    <base th:href="@{/}"/>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        .div0 {
+            min-width: 970px;
+            background-color: rgb(250, 250, 250);
+            background: url(img/beijing.jpg);
+            min-height: 1000px;
+        }
+
+        /* ======================= */
+        /* ===阿里图库的图片样式 === */
+        /* ======================= */
+        .icon {
+            width: 1.3em;
+            height: 1.3em;
+            vertical-align: -0.3em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+
+        .row1 {
+            margin-top: 64px;
+        }
+
+        .user-top {
+            height: 150px;
+            background-color: rgb(255, 255, 255);
+            border-radius: 6px;
+        }
+
+        .user-top-in {
+            position: relative;
+        }
+
+        .user-top-in-img {
+            position: absolute;
+            top: 10px;
+            left: 60px;
+        }
+
+        .user-top-in-name {
+            text-align: center;
+            width: 200px;
+            position: absolute;
+            top: 115px;
+            left: 10px;
+            color: #666;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .user-top-in-type {
+            height: 80px;
+            width: 84%;
+            position: absolute;
+            top: 60px;
+            left: 15%;
+        }
+
+        .user-top-in-type1 {
+            float: left;
+            text-align: center;
+            height: 80px;
+            width: 25%;
+            top: 120px;
+            left: 8%;
+            line-height: 10px;
+        }
+
+        .user-top-in-type2 {
+            font-weight: bold;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .user-top-in-type3 {
+            font-weight: bold;
+            font-size: 15px;
+            line-height: 36px;
+            color: #aaa;
+        }
+
+        .user-top-in-button1:hover, .user-top-in-button2:hover {
+            background-color: #eee;
+        }
+
+        /* right */
+        .div-right {
+            display: none;
+        }
+
+        a {
+            cursor: pointer;
+        }
+
+        .buttoncolor {
+            background-color: #eee;
+        }
+
+        .form-button {
+            text-align: center;
+            position: absolute;
+            background-color: rgb(46, 202, 250);
+            /*font-weight: 500px;*/
+            color: rgb(255, 255, 255);
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 7px;
+            padding: 5px;
+            width: 200px;
+            bottom: -55px;
+            left: calc(50% - 100px);
+            cursor: pointer;
+        }
+
+        .form-button:hover {
+            background-color: rgb(46, 168, 206);
+        }
+
+        .list-group-item {
+            background-color: rgb(248, 255, 248);
+            padding: 25px 15px;
+            border-left: 0px;
+            border-right: 0px;
+        }
+
+        .account {
+
+        }
+
+        .account-list {
+            height: 70px;
+            font-size: 15px;
+        }
+
+        .account-list-span {
+            float: right;
+            margin-left: 40px;
+            cursor: pointer;
+            color: deepskyblue;
+        }
+
+        .account-list-span:hover {
+            text-decoration: underline;
+        }
+
+        .right-bottom {
+            /* border:solid 1px rgb(170, 170, 170);
+            border-radius: 6px; */
+            line-height: 25px;
+            text-align: center;
+            height: 80px;
+            margin-top: 15px;
+            background-color: #fff;
+            font-size: 14px;
+            color: #BBB;
+            border-radius: 5px;
+        }
+
+        @media screen and (max-width: 1200px) {
+            #myScrollspy {
+                display: none;
+            }
+        }
+
+        .thumbnail1 {
+            opacity: 0.5;
+        }
+
+        .thumbnail1:hover {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="div0">
+        <div th:replace="nav-head :: head"></div>
+        <div class="container">
+            <div class="row row1">
+                <div class="col-lg-12" style="">
+
+                    <div class="user-top">
+                        <div class="user-top-in">
+                            <img src="https://static.runoob.com/images/mix/img_avatar.png"
+                                 class="img-circle user-top-in-img" style="width:100px">
+                            <th:block th:if="${session.loginUser} != null">
+                                <div class="user-top-in-name">[[${session.loginUser.name}]]</div>
+                            </th:block>
+                            <div class="user-top-in-type">
+                                <div class="user-top-in-type1">
+                                    <span class="user-top-in-type2">周排名</span><br><span
+                                        class="user-top-in-type3">54345</span>
+                                </div>
+                                <div class="user-top-in-type1">
+                                    <span class="user-top-in-type2">总排名</span><br><span
+                                        class="user-top-in-type3">45456</span>
+                                </div>
+                                <div class="user-top-in-type1">
+                                    <span class="user-top-in-type2">访问量</span><br><span
+                                        class="user-top-in-type3">5565</span>
+                                </div>
+                                <div class="user-top-in-type1">
+                                    <span class="user-top-in-type2">粉丝</span><br><span class="user-top-in-type3">456</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-default" style="margin-top: 10px;">
+                        <ul class="nav nav-tabs">
+                            <li><a id="button1" class="buttoncolor">个人信息</a></li>
+                            <li><a id="button2">账户设置</a></li>
+                            <li><a id="button3">相册管理</a></li>
+                        </ul>
+                        <div class="panel-body">
+                            <!-- 论坛 -->
+                            <div class="" id="luntan" style="position: relative;margin-bottom: 60px;">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">
+                                            用户昵称
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <input class="form-control" id="name" type="text" value="d撒打算"
+                                                   style="width: 80%;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">
+                                            用户ID
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <input class="form-control" id="userId" type="text" value="123456"
+                                                   style="width: 80%;" disabled>
+                                        </div>
+                                    </div>
+                                    <label for="name" class="col-sm-2 control-label"
+                                           style="margin-left: -15px;margin-right: 15px;">性别</label>
+                                    <div class="form-group">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optionsRadiosinline" id="optionsRadios3"
+                                                   value="option1" checked> 男
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="optionsRadiosinline" id="optionsRadios4"
+                                                   value="option2"> 女
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">
+                                            用户简介
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <textarea class="form-control" rows="3" style="width: 80%;"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">
+                                            地址
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <input class="form-control" id="address" type="text" placeholder="未填写"
+                                                   style="width: 80%;">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">
+                                            生日
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <input class="form-control" id="birthday" type="text" placeholder="未填写"
+                                                   style="width: 80%;">
+                                        </div>
+                                    </div>
+                                    <div class="form-button">
+                                        保存
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- 收藏 -->
+                            <div class="div-right" id="shoucang">
+                                <div class="">
+                                    <ul class="list-group" style="background-color: #eee;">
+                                        <li class="list-group-item account-list">密码<span
+                                                class="account-list-span">修改密码</span></li>
+                                        <li class="list-group-item account-list">手机<span
+                                                class="account-list-span">修改手机</span><span
+                                                style="float: right;">147*****21</span></li>
+                                        <li class="list-group-item account-list">邮箱<span
+                                                class="account-list-span">修改邮箱</span><span style="float: right;">9995**@*.com</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- xiangce -->
+                            <div class="div-right" id="xiangce">
+                                <label for="file" class="col-sm-6 col-md-3">
+                                    <a class="thumbnail">
+                                        <img src="./+.jpg"
+                                             alt="通用的占位符缩略图" class="thumbnail1">
+                                    </a>
+                                </label>
+                                <input type="file" id="file" style="display: none"/>
+                                <div class="col-sm-6 col-md-3">
+                                    <a class="thumbnail">
+                                        <img src="https://static.runoob.com/images/mix/img_avatar.png"
+                                             alt="通用的占位符缩略图">
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-bottom">
+                        <div class="">
+                            <span style="font-size: 14px;">关于我们 招贤纳士 广告服务 开发助手 400-660-XXXXX@qq.com 客服工作时间 8:30-22:00</span><br>
+                            <span style="font-size: 12px;">公安备案号1101050xxxxxx 京ICP备19xxxxxx号京网文〔2021〕1039-165号 经营性网站备案信息 北京互联网违法和不良信息举报中心</span><br>
+                            <span style="font-size: 12px;">网络110报警服务 中国互联网举报中心 家长监护 Chrome商店下载 ©1999-2021北京创新乐知网络技术有限公司 版权与免责声明 版权申诉</span><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src='js/iconfont.js'></script>
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script>
+    function removecolor() {
+        $("#button1,#button2,#button3").removeClass("buttoncolor");
+        $("#luntan,#shoucang,#xiangce").addClass("div-right");
+    };
+    $(document).ready(function () {
+        // 点击后样式改变
+        $("#button1").click(function () {
+            removecolor();
+            $("#button1").addClass("buttoncolor");
+            $("#luntan").removeClass("div-right");
+        });
+        $("#button2").click(function () {
+            removecolor();
+            $("#button2").addClass("buttoncolor");
+            $("#shoucang").removeClass("div-right");
+        });
+        $("#button3").click(function () {
+            removecolor();
+            $("#button3").addClass("buttoncolor");
+            $("#xiangce").removeClass("div-right");
+        });
+    });
+
+    function add() {
+        var html = "<div class='col-sm-4'><div class='panel panel-info'><div class='panel-heading'><i class='fa fa-times'></i></div><div class='panel-body' style='text-align: center;'><div class='row'><div class='col-sm-12 col-md-12'><img class='updateimg img-responsive' src='img/p_big3.jpg' style='width: inherit;height: 210px;'/></div></div></div></div></div>";
+        var html2 = "<div class='col-sm-6 col-md-3'><a  class='thumbnail'><img class='updateimg img-responsive' src='img/p_big3.jpg' alt='通用的占位符缩略图'></a></div>"
+        $("#xiangce").after(html2);
+    }
+
+    document.getElementById('file').onchange = function () {
+        add();
+        var imgFile = this.files[0];
+        var fr = new FileReader();
+        fr.onload = function () {
+            var imgs = document.getElementsByClassName('updateimg');//获取所有img元素
+            imgs[imgs.length - 1].src = fr.result;//设置最后一个img的src值
+            /*document.getElementById('image').getElementsByTagName('img')[0].src = fr.result;*/
+        };
+        fr.readAsDataURL(imgFile);
+    }
+</script>
+</html>

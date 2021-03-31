@@ -3,7 +3,7 @@
 <mapper namespace="UserDetailMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="UserDetail">
+    <resultMap id="BaseResultMap" type="top.vs.forum.po.UserDetail">
         <id column="id" property="id" />
         <result column="user_id" property="userId" />
         <result column="sex" property="sex" />
