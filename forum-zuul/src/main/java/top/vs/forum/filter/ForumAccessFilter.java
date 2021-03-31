@@ -3,9 +3,11 @@ package top.vs.forum.filter;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
+import lombok.extern.slf4j.Slf4j;
 import top.vs.forum.constant.AccessPassResources;
 import top.vs.forum.constant.ForumConstant;
 import org.springframework.stereotype.Component;
+import top.vs.forum.po.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class ForumAccessFilter extends ZuulFilter {
     @Override
     public String filterType() {
@@ -45,14 +48,15 @@ public class ForumAccessFilter extends ZuulFilter {
         HttpServletRequest request = requestContext.getRequest(); // 获取当前request对象
         HttpSession session = request.getSession();
         Object loginUser = session.getAttribute(ForumConstant.ATTR_NAME_LOGIN_USER);
+        // log.info("网关获取的用户信息：" + (User)loginUser);
 
         // 2、有这个信息则放行，否则重定向到认证模块的登录页面，并封装未登陆信息提示
         if (loginUser == null) {
             // 从请求上下文获取response
             HttpServletResponse response = requestContext.getResponse();
-            session.setAttribute(ForumConstant.ATTR_NAME_MESSAGE, ForumConstant.MESSAGE_ACCESS_FORBIDDEN);
+            session.setAttribute(ForumConstant.ATTR_NAME_SESSION_MESSAGE, ForumConstant.MESSAGE_ACCESS_FORBIDDEN);
             try {
-                response.sendRedirect("/user/login/page");
+                response.sendRedirect("/ident/login/page");
             } catch (IOException e) {
                 e.printStackTrace();
             }

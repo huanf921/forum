@@ -9,9 +9,9 @@ public class AccessPassResources {
 
     static {
         PASS_RES_SET.add("/");
-        PASS_RES_SET.add("/user/login/page");
-        PASS_RES_SET.add("/user/login");
-        PASS_RES_SET.add("/user/register");
+        PASS_RES_SET.add("/ident/login/page");
+        PASS_RES_SET.add("/ident/login");
+        PASS_RES_SET.add("/ident/register");
     }
 
     public static final Set<String> STATIC_RES_SET = new HashSet<>();

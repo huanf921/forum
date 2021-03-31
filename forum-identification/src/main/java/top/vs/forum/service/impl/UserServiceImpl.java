@@ -5,6 +5,7 @@ import top.vs.forum.mapper.UserMapper;
 import top.vs.forum.po.User;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import top.vs.forum.service.UserService;
 
 /**
  * <p>
@@ -15,6 +16,6 @@ import org.springframework.stereotype.Service;
  * @since 2021-03-09
  */
 @Service
-public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IService<User> {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
 }

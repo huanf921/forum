@@ -39,10 +39,19 @@ public class Post extends Model<Post> {
     private String title;
 
     /**
+     * 论贴分类类型
+     */
+    private String type;
+
+    /**
+     * 回复数
+     */
+    private Integer replies;
+
+    /**
      * 发表时间
      */
     private LocalDateTime time;
-
 
     @Override
     protected Serializable pkVal() {

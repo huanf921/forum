@@ -42,8 +42,7 @@ public class UserDetail extends Model<UserDetail> {
     /**
      * 用户头像地址
      */
-    @TableField("headUrl")
-    private String headurl;
+    private String headUrl;
 
     /**
      * 个人简介
@@ -61,10 +60,14 @@ public class UserDetail extends Model<UserDetail> {
     private String email;
 
     /**
-     * 访问量(论贴+空间)
+     * 总访问量(论贴+空间)
      */
-    private Integer visits;
+    private Integer allVisits;
 
+    /**
+     * 周访问量(论贴+空间)
+     */
+    private Integer weekVisits;
 
     @Override
     protected Serializable pkVal() {

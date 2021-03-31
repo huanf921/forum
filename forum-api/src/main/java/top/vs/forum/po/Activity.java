@@ -54,7 +54,7 @@ public class Activity extends Model<Activity> {
     private LocalDateTime time;
 
     /**
-     * 是否已读
+     * 是否已读（0：未读；1：已读）
      */
     private Integer readed;
 

@@ -12,8 +12,8 @@ spring:
 #      enabled: true
   #  redis:
 #    host: localhost
-#  session:
-#    store-type: redis
+  session:
+    store-type: redis
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:///forum?useSSL=false&&serverTimezone=UTC

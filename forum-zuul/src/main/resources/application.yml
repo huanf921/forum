@@ -1,13 +1,18 @@
 server:
-  port: 8105 # 为了让访问效果更加逼真，直接设置为默认端口80
+  port: 80 # 为了让访问效果更加逼真，直接设置为默认端口80
 spring:
   application:
     name: forum-zuul
   session:
     store-type: redis
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql:///forum?useSSL=false&&serverTimezone=UTC
+    username: root
+    password: 123456
 eureka:
   client:
-    ser`vice-url:
+    service-url:
       defaultZone: http://localhost:8100/eureka
 zuul:
   ignored-services: "*"
