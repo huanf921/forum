@@ -26,10 +26,3 @@ eureka:
 
 mybatis-plus:
   mapper-locations: classpath*:mapper/*Mapper.xml
-#aliyun:
-#  oss:
-#    access-key-id: LTAI4G3Hx2BRMMsqMV6iQ7gV
-#    access-key-secret: HnHOMgpCbXsv91jbEfD9C0SMgU2jLQ
-#    bucket-domain: http://visional.oss-cn-shenzhen.aliyuncs.com
-#    bucket-name: visional
-#    end-point: http://oss-cn-shenzhen.aliyuncs.com

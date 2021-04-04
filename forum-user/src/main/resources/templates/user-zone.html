@@ -60,7 +60,7 @@
 
         .user-top-in-name {
             position: absolute;
-            top: 25px;
+            top: 47px;
             left: 120px;
             color: #666;
             font-size: 18px;
@@ -245,6 +245,7 @@
     <script src='js/iconfont.js'></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="layer/layer.js"></script>
     <script>
         function removecolor() {
             $("#button1,#button2,#button3,#button4").removeClass("buttoncolor");
@@ -273,6 +274,35 @@
                 $("#button4").addClass("buttoncolor");
                 $("#xiangce").removeClass("div-right");
             });
+
+            // 页面加载时获取用户简要信息
+            $.ajax({
+                "url":"/user/get/user/brief/info/" + [[${session.loginUser.id}]],
+                "type":"get",
+                // "data":{
+                //     "phoneNum":phoneNum
+                // },
+                "dataType":"json",
+                "success":function (responseData){
+                    let code = responseData.code;
+                    if(code == "200") {
+                        let data = responseData.data;
+                        $(".table1").text(data.name + "的空间")
+                        $(".user-top-in-name").text(data.name)
+                        $(".table2").text(data.introduction)
+                        $(".headImg").attr("src", data.headUrl)
+                        $(".user-top-in-type3").eq(0).text(data.weekRanking + 1)
+                        $(".user-top-in-type3").eq(1).text(data.allRanking + 1)
+                        $(".user-top-in-type3").eq(2).text(data.allVisits)
+                        $(".user-top-in-type3").eq(3).text(data.fans)
+                    } else {
+                        layer.msg("获取用户简要信息失败：" + responseData.message);
+                    }
+                },
+                "error":function(response){
+                    layer.msg(response.status + " " + response.statusText);
+                }
+            })
         });
     </script>
 </head>
@@ -280,10 +310,7 @@
     <div class="div0">
         <div th:replace="nav-head :: head"></div>
         <div class="container">
-            <!--暂时先从session取用户测试            -->
-            <th:block th:if="${session.loginUser} != null">
-                <h2 class="table1">[[${session.loginUser.name}]]的空间</h2>
-            </th:block>
+            <h2 class="table1">用户的空间</h2>
             <h5 class="table2">简介</h5>
             <div class="row row1">
                 <div class="col-lg-4" id="myScrollspy">
@@ -291,10 +318,8 @@
                         <div class="user-top">
                             <div class="user-top-in">
                                 <img src="https://static.runoob.com/images/mix/img_avatar.png"
-                                     class="img-circle user-top-in-img" style="width:80px">
-                                <th:block th:if="${session.loginUser} != null">
-                                    <div class="user-top-in-name">[[${session.loginUser.name}]]</div>
-                                </th:block>
+                                     class="img-circle user-top-in-img headImg" style="width:80px">
+                                <div class="user-top-in-name">用户名</div>
 
                                 <div class="user-top-in-type">
                                     <div class="user-top-in-type1">

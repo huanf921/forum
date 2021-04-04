@@ -102,7 +102,8 @@ public class UserDetailServiceImpl extends ServiceImpl<UserDetailMapper, UserDet
             userDetailInfoDTO.setIntroduction(userDetail.getIntroduction());
         } else {
             // 2、数据库获取用户详细信息以及相册图片地址列表
-            UserDetail userDetail = this.getById(userId);
+            UserDetail userDetail = this.getOne(new LambdaQueryWrapper<UserDetail>()
+                    .eq(UserDetail::getUserId, userId));
             BeanUtils.copyProperties(userDetail, userDetailInfoDTO);
             List<String> albumUrls = userAlbumService.list(new LambdaQueryWrapper<UserAlbum>()
                     .select(UserAlbum::getPicUrl)
@@ -110,6 +111,7 @@ public class UserDetailServiceImpl extends ServiceImpl<UserDetailMapper, UserDet
                     .stream()
                     .map(UserAlbum::getPicUrl)
                     .collect(Collectors.toList());
+            log.warn(albumUrls.toString());
             userDetailInfoDTO.setAlbumUrls(albumUrls);
         }
         // 3、缓存获取两排名+总访问量+粉丝数

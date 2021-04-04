@@ -179,6 +179,7 @@
     <script src='js/iconfont.js'></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="layer/layer.js"></script>
     <script>
         function removecolor() {
             $("#button1,#button2,#button3").removeClass("buttoncolor");
@@ -210,29 +211,100 @@
             // })
 
             // 1、页面加载时获取用户信息
+            $.ajax({
+                "url":"/user/get/user/detail/info/" + [[${session.loginUser.id}]],
+                "type":"get",
+                // "data":{
+                //     "phoneNum":phoneNum
+                // },
+                "dataType":"json",
+                "success":function(responseData){
+                    let code = responseData.code;
+                    if(code == "200") {
+                        let data = responseData.data;
+
+                        // 基本信息
+                        if (data.headUrl != null) {
+                            $(".headImg").attr("src", data.headUrl);
+                        }
+                        $(".user-top-in-type3").eq(0).text(data.weekRanking + 1)
+                        $(".user-top-in-type3").eq(1).text(data.allRanking + 1)
+                        $(".user-top-in-type3").eq(2).text(data.allVisits)
+                        $(".user-top-in-type3").eq(3).text(data.fans)
+
+                        // 个人信息
+                        $(":input[name='name']").val(data.name)
+                        $(":input[name='userId']").val(data.userId)
+                        $(":input[name='sex']").val(data.sex)
+                        $("#ta").val(data.introduction)
+                        $(":input[name='birthday']").val(data.birthday)
+
+                        // 账户设置
+                        $("#phone").text(data.phone)
+                        $("#email").text(data.email)
+
+                        // 相册管理
+                        let urls = data.albumUrls;
+                        let plus =
+                            "<label for=\"file\" class=\"col-sm-6 col-md-3\">\n" +
+                            "<a class=\"thumbnail\">\n" +
+                            "<img src=\"img/+.jpg\" alt=\"通用的占位符缩略图\" class=\"thumbnail1\">\n" +
+                            "</a>\n" +
+                            "</label>\n" +
+                            "<input type=\"file\" id=\"file\" style=\"display: none\"/>"
+                        if (urls == null || urls.length == 0) {
+                            $("#xiangce").append(plus)
+                        } else {
+                            for (let i = 0; i < urls.length; i++) {
+                                let url = urls[i];
+                                console.log("取到的图片路径"+url)
+                                let albumPic =
+                                    "<div class=\"col-sm-6 col-md-3\">\n" +
+                                    "    <a class=\"thumbnail\">\n" +
+                                    "        <img src='" + url + "' alt=\"通用的占位符缩略图\">\n" +
+                                    "    </a>\n" +
+                                    "</div>"
+                                $("#xiangce").append(albumPic)
+                            }
+                            $("#xiangce").append(plus)
+                        }
+                        // <div class="col-sm-6 col-md-3">
+                        //     <a class="thumbnail">
+                        //         <img src="https://static.runoob.com/images/mix/img_avatar.png"
+                        //              alt="通用的占位符缩略图">
+                        //     </a>
+                        // </div>
+
+                        // <label for="file" class="col-sm-6 col-md-3">
+                        //     <a class="thumbnail">
+                        //         <img src="img/+.jpg"
+                        //              alt="通用的占位符缩略图" class="thumbnail1">
+                        //     </a>
+                        // </label>
+                        // <input type="file" id="file" style="display: none"/>
+
+                    } else {
+                        layer.msg("获取用户信息失败：" + responseData.message);
+                    }
+
+                },
+                "error":function(response){
+                    layer.msg(response.status + " " + response.statusText);
+                }
+
+            })
 
             $(".form-button").click(() => {
 
             })
         });
 
-        function add() {
-            var html = "<div class='col-sm-4'><div class='panel panel-info'><div class='panel-heading'><i class='fa fa-times'></i></div><div class='panel-body' style='text-align: center;'><div class='row'><div class='col-sm-12 col-md-12'><img class='updateimg img-responsive' src='img/p_big3.jpg' style='width: inherit;height: 210px;'/></div></div></div></div></div>";
-            var html2 = "<div class='col-sm-6 col-md-3'><a  class='thumbnail'><img class='updateimg img-responsive' src='img/p_big3.jpg' alt='通用的占位符缩略图'></a></div>"
-            $("#xiangce").after(html2);
-        }
+        // function add() {
+        //     var html = "<div class='col-sm-4'><div class='panel panel-info'><div class='panel-heading'><i class='fa fa-times'></i></div><div class='panel-body' style='text-align: center;'><div class='row'><div class='col-sm-12 col-md-12'><img class='updateimg img-responsive' src='img/p_big3.jpg' style='width: inherit;height: 210px;'/></div></div></div></div></div>";
+        //     var html2 = "<div class='col-sm-6 col-md-3'><a  class='thumbnail'><img class='updateimg img-responsive' src='img/p_big3.jpg' alt='通用的占位符缩略图'></a></div>"
+        //     $("#xiangce").after(html2);
+        // }
 
-        document.getElementById('file').onchange = function () {
-            add();
-            var imgFile = this.files[0];
-            var fr = new FileReader();
-            fr.onload = function () {
-                var imgs = document.getElementsByClassName('updateimg');//获取所有img元素
-                imgs[imgs.length - 1].src = fr.result;//设置最后一个img的src值
-                /*document.getElementById('image').getElementsByTagName('img')[0].src = fr.result;*/
-            };
-            fr.readAsDataURL(imgFile);
-        }
     </script>
 </head>
 <body>
@@ -245,7 +317,7 @@
                     <div class="user-top">
                         <div class="user-top-in">
                             <img src="https://static.runoob.com/images/mix/img_avatar.png"
-                                 class="img-circle user-top-in-img" style="width:100px">
+                                 class="img-circle user-top-in-img headImg" style="width:100px">
                             <th:block th:if="${session.loginUser} != null">
                                 <div class="user-top-in-name">[[${session.loginUser.name}]]</div>
                             </th:block>
@@ -313,7 +385,7 @@
                                             用户简介
                                         </label>
                                         <div class="col-sm-10">
-                                            <textarea class="form-control" rows="3" style="width: 80%;"></textarea>
+                                            <textarea id="ta" name="introduction" class="form-control" rows="3" style="width: 80%;"></textarea>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -335,31 +407,22 @@
                                 <div class="">
                                     <ul class="list-group" style="background-color: #eee;">
                                         <li class="list-group-item account-list">密码<span
-                                                class="account-list-span">修改密码</span></li>
+                                                class="account-list-span">修改密码</span><span
+                                                style="float: right;" id="pwd">********</span></li>
                                         <li class="list-group-item account-list">手机<span
                                                 class="account-list-span">修改手机</span><span
-                                                style="float: right;">147*****21</span></li>
+                                                style="float: right;" id="phone">147*****21</span></li>
                                         <li class="list-group-item account-list">邮箱<span
-                                                class="account-list-span">修改邮箱</span><span style="float: right;">9995**@*.com</span>
+                                                class="account-list-span">修改邮箱</span><span
+                                                style="float: right;" id="email">9995**@*.com</span>
                                         </li>
                                     </ul>
                                 </div>
                             </div>
                             <!-- xiangce -->
                             <div class="div-right" id="xiangce">
-                                <label for="file" class="col-sm-6 col-md-3">
-                                    <a class="thumbnail">
-                                        <img src="img/+.jpg"
-                                             alt="通用的占位符缩略图" class="thumbnail1">
-                                    </a>
-                                </label>
-                                <input type="file" id="file" style="display: none"/>
-                                <div class="col-sm-6 col-md-3">
-                                    <a class="thumbnail">
-                                        <img src="https://static.runoob.com/images/mix/img_avatar.png"
-                                             alt="通用的占位符缩略图">
-                                    </a>
-                                </div>
+
+
                             </div>
                         </div>
                     </div>
@@ -375,5 +438,18 @@
         </div>
     </div>
 </body>
-
+<script>
+    document.getElementById('file').onchange = function () {
+        console.log("文件上传到页面端了")
+        // add();
+        // var imgFile = this.files[0];
+        // var fr = new FileReader();
+        // fr.onload = function () {
+        //     var imgs = document.getElementsByClassName('updateimg');//获取所有img元素
+        //     imgs[imgs.length - 1].src = fr.result;//设置最后一个img的src值
+        //     /*document.getElementById('image').getElementsByTagName('img')[0].src = fr.result;*/
+        // };
+        // fr.readAsDataURL(imgFile);
+    }
+</script>
 </html>

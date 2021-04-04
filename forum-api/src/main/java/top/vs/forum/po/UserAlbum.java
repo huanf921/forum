@@ -30,7 +30,7 @@ public class UserAlbum extends Model<UserAlbum> {
     /**
      * 用户id
      */
-    private Long userId;
+    private Integer userId;
 
     /**
      * 相册图片地址

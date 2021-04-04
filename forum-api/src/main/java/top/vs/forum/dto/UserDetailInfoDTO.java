@@ -1,5 +1,6 @@
 package top.vs.forum.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -44,6 +45,7 @@ public class UserDetailInfoDTO implements Serializable {
     /**
      * 用户生日
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
     /**
