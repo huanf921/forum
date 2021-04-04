@@ -4,10 +4,11 @@ import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import top.vs.forum.api.ForumUserFeignClient;
 import top.vs.forum.constant.AccessPassResources;
 import top.vs.forum.constant.ForumConstant;
 import org.springframework.stereotype.Component;
-import top.vs.forum.po.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +18,7 @@ import java.io.IOException;
 @Component
 @Slf4j
 public class ForumAccessFilter extends ZuulFilter {
+
     @Override
     public String filterType() {
         return "pre";
@@ -37,6 +39,7 @@ public class ForumAccessFilter extends ZuulFilter {
             return false;
         }
 
+        // log.info("这里是zuul过滤器，当前访问的路径是：" + request.getServletPath());
         // 放行静态资源的访问（否则页面样式都无法显示）
         return !AccessPassResources.judgeCurrentServletPathWithinStaticResource(request.getServletPath());
     }
@@ -48,7 +51,8 @@ public class ForumAccessFilter extends ZuulFilter {
         HttpServletRequest request = requestContext.getRequest(); // 获取当前request对象
         HttpSession session = request.getSession();
         Object loginUser = session.getAttribute(ForumConstant.ATTR_NAME_LOGIN_USER);
-        // log.info("网关获取的用户信息：" + (User)loginUser);
+
+        // log.info("这里是zuul过滤器，拦截非静态资源/非登录注册的请求，网关当前获取的用户信息：" + (User)loginUser);
 
         // 2、有这个信息则放行，否则重定向到认证模块的登录页面，并封装未登陆信息提示
         if (loginUser == null) {

@@ -9,6 +9,7 @@ public class ForumWebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-
+        registry.addViewController("/manage/page").setViewName("user-manage");
+        registry.addViewController("/zone/page").setViewName("user-zone");
     }
 }

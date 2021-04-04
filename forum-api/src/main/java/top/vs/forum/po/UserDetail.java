@@ -42,7 +42,7 @@ public class UserDetail extends Model<UserDetail> {
     /**
      * 用户手机号
      */
-    private Integer phone;
+    private String phone;
 
     /**
      * 用户头像地址

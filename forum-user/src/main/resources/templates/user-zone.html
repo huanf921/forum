@@ -242,6 +242,39 @@
             }
         }
     </style>
+    <script src='js/iconfont.js'></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        function removecolor() {
+            $("#button1,#button2,#button3,#button4").removeClass("buttoncolor");
+            $("#luntan,#shoucang,#guanzhu,#xiangce").addClass("div-right");
+        };
+        $(function () {
+            $("#portal").removeClass("active")
+            // 相册 论坛 收藏 关注按钮事件
+            $("#button1").click(function () {
+                removecolor();
+                $("#button1").addClass("buttoncolor");
+                $("#luntan").removeClass("div-right");
+            });
+            $("#button2").click(function () {
+                removecolor();
+                $("#button2").addClass("buttoncolor");
+                $("#shoucang").removeClass("div-right");
+            });
+            $("#button3").click(function () {
+                removecolor();
+                $("#button3").addClass("buttoncolor");
+                $("#guanzhu").removeClass("div-right");
+            });
+            $("#button4").click(function () {
+                removecolor();
+                $("#button4").addClass("buttoncolor");
+                $("#xiangce").removeClass("div-right");
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="div0">
@@ -251,7 +284,7 @@
             <th:block th:if="${session.loginUser} != null">
                 <h2 class="table1">[[${session.loginUser.name}]]的空间</h2>
             </th:block>
-            <h5 class="table2">撒大大</h5>
+            <h5 class="table2">简介</h5>
             <div class="row row1">
                 <div class="col-lg-4" id="myScrollspy">
                     <div data-spy="affix" data-offset-top="0">
@@ -388,37 +421,5 @@
         </div>
     </div>
 </body>
-<script src='js/iconfont.js'></script>
-<script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script>
 
-    function removecolor() {
-        $("#button1,#button2,#button3,#button4").removeClass("buttoncolor");
-        $("#luntan,#shoucang,#guanzhu,#xiangce").addClass("div-right");
-    };
-    $(document).ready(function () {
-        // 相册 论坛 收藏 关注按钮事件
-        $("#button1").click(function () {
-            removecolor();
-            $("#button1").addClass("buttoncolor");
-            $("#luntan").removeClass("div-right");
-        });
-        $("#button2").click(function () {
-            removecolor();
-            $("#button2").addClass("buttoncolor");
-            $("#shoucang").removeClass("div-right");
-        });
-        $("#button3").click(function () {
-            removecolor();
-            $("#button3").addClass("buttoncolor");
-            $("#guanzhu").removeClass("div-right");
-        });
-        $("#button4").click(function () {
-            removecolor();
-            $("#button4").addClass("buttoncolor");
-            $("#xiangce").removeClass("div-right");
-        });
-    });
-</script>
 </html>

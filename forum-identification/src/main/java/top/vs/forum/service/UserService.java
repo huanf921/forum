@@ -2,6 +2,9 @@ package top.vs.forum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.vs.forum.po.User;
+import top.vs.forum.vo.UserInfoVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,7 @@ import top.vs.forum.po.User;
  */
 public interface UserService extends IService<User> {
 
+    List<UserInfoVO> getWeekHotUsers();
+
+    void initRedisUserSimpleInfo(Integer id);
 }

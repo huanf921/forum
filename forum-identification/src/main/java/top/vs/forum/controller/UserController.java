@@ -4,19 +4,21 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import top.vs.forum.api.ForumUserFeignClient;
 import top.vs.forum.constant.ForumConstant;
 import top.vs.forum.dto.ResultDTO;
+import top.vs.forum.dto.UserSimpleDTO;
 import top.vs.forum.po.User;
 import top.vs.forum.service.UserService;
+import top.vs.forum.vo.UserInfoVO;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -34,11 +36,15 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ForumUserFeignClient forumUserFeignClient;
+
     @GetMapping("/")
-    public String showPortalPage(ModelMap modelMap) {
-
-        // 查询首页数据并封装
-
+    public String showPortalPage(ModelMap modelMap, HttpSession session) {
+        setPageHotData(modelMap);
+        if (session.getAttribute(ForumConstant.ATTR_NAME_LOGIN_USER) != null) {
+            return "center";
+        }
         return "home";
     }
 
@@ -51,6 +57,8 @@ public class UserController {
         if (userDB == null) {
             user.setPassword(SecureUtil.md5(user.getPassword()));
             userService.save(user);
+            // 在缓存中初始化用户的粉丝数及其访问量
+            userService.initRedisUserSimpleInfo(userService.getOne(wrapper).getId());
             map.addAttribute(ForumConstant.ATTR_NAME_MESSAGE, ForumConstant.MESSAGE_TO_LOGIN);
         } else {
             map.addAttribute(ForumConstant.ATTR_NAME_MESSAGE, ForumConstant.MESSAGE_LOGIN_ACCT_ALREADY_IN_USE);
@@ -79,7 +87,6 @@ public class UserController {
             String passwordInput = user.getPassword();
             if (StrUtil.equals(SecureUtil.md5(passwordInput), passwordDB)) {
                 session.setAttribute(ForumConstant.ATTR_NAME_LOGIN_USER, userDB);
-                // log.info("存入spring session：" + session.getAttribute("loginUser"));
                 return "redirect:http://www.huanforum.com/ident/to/center/page";
             } else {
                 map.addAttribute(ForumConstant.ATTR_NAME_MESSAGE, ForumConstant.MESSAGE_PASSWORD_ERROR);
@@ -88,9 +95,43 @@ public class UserController {
         }
     }
 
+    @GetMapping("ident/to/center/page")
+    public String showCenterPage(ModelMap map) {
+        setPageHotData(map);
+        return "center";
+    }
+
+    @GetMapping("/ident/get/user/info/{userId}")
+    @ResponseBody
+    public ResultDTO<UserInfoVO> getUserInfo(@PathVariable("userId") Integer userId) {
+        // 封装首页用户展示数据
+        UserInfoVO userInfoVO = new UserInfoVO();
+        userInfoVO.setUserId(userId);
+        // 调用用户远程服务获取相关信息
+        ResultDTO<UserSimpleDTO> userSimpleInfoResult = forumUserFeignClient.getUserSimpleInfo(userId);
+        if (!userSimpleInfoResult.getCode().equals("200")) {
+            return ResultDTO.error("500", userSimpleInfoResult.getMessage());
+        } else {
+            UserSimpleDTO userSimpleDTO = userSimpleInfoResult.getData();
+            BeanUtils.copyProperties(userSimpleDTO, userInfoVO);
+            return ResultDTO.ok(userInfoVO);
+        }
+
+    }
+
     @GetMapping("/ident/logout")
     public String userLogOut(HttpSession session) {
         session.removeAttribute(ForumConstant.ATTR_NAME_LOGIN_USER);
         return "redirect:http://www.huanforum.com";
+    }
+
+    /**
+     * 将首页热门数据注入请求域
+     * @param map
+     */
+    private void setPageHotData(ModelMap map) {
+        // 查询热帖、周名人数据并封装
+        List<UserInfoVO> userInfoVOS = userService.getWeekHotUsers();
+        map.addAttribute("weekHotUsers", userInfoVOS);
     }
 }

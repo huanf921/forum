@@ -101,7 +101,7 @@ public class MybatisPlusGenerator {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输入文件名称
-                return projectPath + "/forum-api//src/main/resources/mapper/"
+                return projectPath + "/forum-api/src/main/resources/mapper/"
                         + "/" + tableInfo.getEntityName() + "Mapper" + StringPool.DOT_XML;
             }
         });

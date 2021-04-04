@@ -9,6 +9,6 @@ public class ForumWebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/post/to/post").setViewName("toPost");
+        registry.addViewController("/to/post").setViewName("toPost");
     }
 }

@@ -8,8 +8,7 @@
     <style>
         .div0 {
             min-width: 970px;
-            background-color: rgb(250, 250, 250);
-            background: url(img/beijing.jpg);
+            background-color: #f5f6f7;
             min-height: 1000px;
         }
 
@@ -177,6 +176,64 @@
             opacity: 0.7;
         }
     </style>
+    <script src='js/iconfont.js'></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+        function removecolor() {
+            $("#button1,#button2,#button3").removeClass("buttoncolor");
+            $("#luntan,#shoucang,#xiangce").addClass("div-right");
+        };
+        $(function () {
+            $("#portal").removeClass("active")
+            $("#mine").addClass("active")
+
+            // 点击后样式改变
+            $("#button1").click(function () {
+                removecolor();
+                $("#button1").addClass("buttoncolor");
+                $("#luntan").removeClass("div-right");
+            });
+            $("#button2").click(function () {
+                removecolor();
+                $("#button2").addClass("buttoncolor");
+                $("#shoucang").removeClass("div-right");
+            });
+            $("#button3").click(function () {
+                removecolor();
+                $("#button3").addClass("buttoncolor");
+                $("#xiangce").removeClass("div-right");
+            });
+
+            // $(":input[name='sex']").click(function (){
+            //     console.log(this.value)
+            // })
+
+            // 1、页面加载时获取用户信息
+
+            $(".form-button").click(() => {
+
+            })
+        });
+
+        function add() {
+            var html = "<div class='col-sm-4'><div class='panel panel-info'><div class='panel-heading'><i class='fa fa-times'></i></div><div class='panel-body' style='text-align: center;'><div class='row'><div class='col-sm-12 col-md-12'><img class='updateimg img-responsive' src='img/p_big3.jpg' style='width: inherit;height: 210px;'/></div></div></div></div></div>";
+            var html2 = "<div class='col-sm-6 col-md-3'><a  class='thumbnail'><img class='updateimg img-responsive' src='img/p_big3.jpg' alt='通用的占位符缩略图'></a></div>"
+            $("#xiangce").after(html2);
+        }
+
+        document.getElementById('file').onchange = function () {
+            add();
+            var imgFile = this.files[0];
+            var fr = new FileReader();
+            fr.onload = function () {
+                var imgs = document.getElementsByClassName('updateimg');//获取所有img元素
+                imgs[imgs.length - 1].src = fr.result;//设置最后一个img的src值
+                /*document.getElementById('image').getElementsByTagName('img')[0].src = fr.result;*/
+            };
+            fr.readAsDataURL(imgFile);
+        }
+    </script>
 </head>
 <body>
     <div class="div0">
@@ -226,7 +283,7 @@
                                             用户昵称
                                         </label>
                                         <div class="col-sm-10">
-                                            <input class="form-control" id="name" type="text" value="d撒打算"
+                                            <input class="form-control" name="name" id="name" type="text" value="d撒打算"
                                                    style="width: 80%;">
                                         </div>
                                     </div>
@@ -235,7 +292,7 @@
                                             用户ID
                                         </label>
                                         <div class="col-sm-10">
-                                            <input class="form-control" id="userId" type="text" value="123456"
+                                            <input class="form-control" name="userId" type="text" value="123456"
                                                    style="width: 80%;" disabled>
                                         </div>
                                     </div>
@@ -243,12 +300,12 @@
                                            style="margin-left: -15px;margin-right: 15px;">性别</label>
                                     <div class="form-group">
                                         <label class="radio-inline">
-                                            <input type="radio" name="optionsRadiosinline" id="optionsRadios3"
-                                                   value="option1" checked> 男
+                                            <input type="radio" name="sex" id="optionsRadios3"
+                                                   value="男" checked> 男
                                         </label>
                                         <label class="radio-inline">
-                                            <input type="radio" name="optionsRadiosinline" id="optionsRadios4"
-                                                   value="option2"> 女
+                                            <input type="radio" name="sex" id="optionsRadios4"
+                                                   value="女"> 女
                                         </label>
                                     </div>
                                     <div class="form-group">
@@ -261,19 +318,10 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">
-                                            地址
-                                        </label>
-                                        <div class="col-sm-10">
-                                            <input class="form-control" id="address" type="text" placeholder="未填写"
-                                                   style="width: 80%;">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">
                                             生日
                                         </label>
                                         <div class="col-sm-10">
-                                            <input class="form-control" id="birthday" type="text" placeholder="未填写"
+                                            <input class="form-control" name="birthday" type="date" placeholder="未填写"
                                                    style="width: 80%;">
                                         </div>
                                     </div>
@@ -301,7 +349,7 @@
                             <div class="div-right" id="xiangce">
                                 <label for="file" class="col-sm-6 col-md-3">
                                     <a class="thumbnail">
-                                        <img src="./+.jpg"
+                                        <img src="img/+.jpg"
                                              alt="通用的占位符缩略图" class="thumbnail1">
                                     </a>
                                 </label>
@@ -327,49 +375,5 @@
         </div>
     </div>
 </body>
-<script src='js/iconfont.js'></script>
-<script src="js/jquery.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script>
-    function removecolor() {
-        $("#button1,#button2,#button3").removeClass("buttoncolor");
-        $("#luntan,#shoucang,#xiangce").addClass("div-right");
-    };
-    $(document).ready(function () {
-        // 点击后样式改变
-        $("#button1").click(function () {
-            removecolor();
-            $("#button1").addClass("buttoncolor");
-            $("#luntan").removeClass("div-right");
-        });
-        $("#button2").click(function () {
-            removecolor();
-            $("#button2").addClass("buttoncolor");
-            $("#shoucang").removeClass("div-right");
-        });
-        $("#button3").click(function () {
-            removecolor();
-            $("#button3").addClass("buttoncolor");
-            $("#xiangce").removeClass("div-right");
-        });
-    });
 
-    function add() {
-        var html = "<div class='col-sm-4'><div class='panel panel-info'><div class='panel-heading'><i class='fa fa-times'></i></div><div class='panel-body' style='text-align: center;'><div class='row'><div class='col-sm-12 col-md-12'><img class='updateimg img-responsive' src='img/p_big3.jpg' style='width: inherit;height: 210px;'/></div></div></div></div></div>";
-        var html2 = "<div class='col-sm-6 col-md-3'><a  class='thumbnail'><img class='updateimg img-responsive' src='img/p_big3.jpg' alt='通用的占位符缩略图'></a></div>"
-        $("#xiangce").after(html2);
-    }
-
-    document.getElementById('file').onchange = function () {
-        add();
-        var imgFile = this.files[0];
-        var fr = new FileReader();
-        fr.onload = function () {
-            var imgs = document.getElementsByClassName('updateimg');//获取所有img元素
-            imgs[imgs.length - 1].src = fr.result;//设置最后一个img的src值
-            /*document.getElementById('image').getElementsByTagName('img')[0].src = fr.result;*/
-        };
-        fr.readAsDataURL(imgFile);
-    }
-</script>
 </html>
