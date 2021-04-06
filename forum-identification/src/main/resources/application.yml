@@ -30,7 +30,9 @@ eureka:
 
 file:
   album:
-    upload: E:/ForumFiles/album/
+    upload: /ForumFiles/album/
+  post:
+    file: /ForumFiles/post-file/
 #ribbon:
 #  ReadTimeout: 10000
 #  ConnectTimeout: 10000

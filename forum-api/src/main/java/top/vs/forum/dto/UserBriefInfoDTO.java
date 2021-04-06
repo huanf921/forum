@@ -3,6 +3,7 @@ package top.vs.forum.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 用户基本信息传输实体
@@ -51,4 +52,9 @@ public class UserBriefInfoDTO implements Serializable {
      * 粉丝数
      */
     private Integer fans;
+
+    /**
+     * 相册地址列表
+     */
+    private List<String> albumUrls;
 }

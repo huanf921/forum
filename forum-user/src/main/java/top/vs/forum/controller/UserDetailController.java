@@ -1,14 +1,21 @@
 package top.vs.forum.controller;
 
+import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import top.vs.forum.constant.ForumConstant;
 import top.vs.forum.dto.ResultDTO;
 import top.vs.forum.dto.UserBriefInfoDTO;
 import top.vs.forum.dto.UserDetailInfoDTO;
+import top.vs.forum.po.User;
 import top.vs.forum.service.UserDetailService;
+
+import javax.servlet.http.HttpSession;
+import java.io.File;
 
 /**
  * <p>
@@ -28,7 +35,6 @@ public class UserDetailController {
     @GetMapping("/zone/page/{userId}")
     public String toZonePage(@PathVariable("userId") Integer userId) {
         // log.info("访问空间");
-        // TODO: 2021/3/31 查询用户详情表+相册表+主表中的信息封装到vo
         return "user-zone";
     }
 
@@ -64,14 +70,79 @@ public class UserDetailController {
         }
     }
 
-    // TODO: 2021/3/31 修改用户详情信息接口（不管是用户个人信息还是手机、邮箱等账户信息） 
-    
-    // TODO: 2021/3/31 相册图片查询接口（用于个人信息管理页面或者个人空间页面）
+    /**
+     * 修改用户详情信息（不管是用户个人信息还是手机、邮箱等账户信息）
+     * @param userDetailInfo
+     * @return
+     */
+    @PostMapping("/upd/user/detail/info")
+    @ResponseBody
+    public ResultDTO updUserDetailInfo(@RequestBody UserDetailInfoDTO userDetailInfo) {
+        log.info(userDetailInfo.toString());
+        try {
+            userDetailService.updUserDetailInfo(userDetailInfo);
+            return ResultDTO.ok();
+        } catch (Exception e) {
+            return ResultDTO.error("500", e.getMessage());
+        }
+    }
 
-    // TODO: 2021/3/31 增加相册图片接口
+    /**
+     * 增加相册图片
+     * @param file
+     * @return
+     */
+    @PostMapping("/save/user/album")
+    @ResponseBody
+    public ResultDTO saveUserAlbum(MultipartFile file, HttpSession session) {
+        try {
+            User user = (User) session.getAttribute(ForumConstant.ATTR_NAME_LOGIN_USER);
+            userDetailService.saveUserAlbum(file, user.getId());
+            return ResultDTO.ok();
+        } catch (Exception e) {
+            return ResultDTO.error("500", e.getMessage());
+        }
 
-    // TODO: 2021/3/31 删除相册图片接口
+    }
 
-    // TODO: 2021/3/31 用户修改头像接口
+    /**
+     * 删除相册图片
+     * @param albumUrl
+     * @param session
+     * @return
+     */
+    @GetMapping("/remove/user/album")
+    @ResponseBody
+    public ResultDTO removeUserAlbum(@RequestParam("albumUrl") String albumUrl, HttpSession session) {
+        User loginUser = (User) session.getAttribute(ForumConstant.ATTR_NAME_LOGIN_USER);
+        Integer userId = loginUser.getId();
 
+        try {
+            userDetailService.removeUserAlbum(userId, albumUrl);
+            return ResultDTO.ok();
+        } catch (Exception e) {
+            return ResultDTO.error("500", e.getMessage());
+        }
+
+    }
+
+    /**
+     * 用户修改头像
+     * @param file
+     * @param session
+     * @return
+     */
+    @PostMapping("/upd/user/head/url")
+    @ResponseBody
+    public ResultDTO updUserHeadUrl(MultipartFile file, HttpSession session) {
+        User user = (User) session.getAttribute(ForumConstant.ATTR_NAME_LOGIN_USER);
+        Integer userId = user.getId();
+
+        try {
+            userDetailService.updUserHeadUrl(file, userId);
+            return ResultDTO.ok();
+        } catch (Exception e) {
+            return ResultDTO.error("500", e.getMessage());
+        }
+    }
 }

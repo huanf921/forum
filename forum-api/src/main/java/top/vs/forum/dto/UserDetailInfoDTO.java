@@ -23,6 +23,11 @@ public class UserDetailInfoDTO implements Serializable {
     private String name;
 
     /**
+     * 用户密码
+     */
+    private String password;
+
+    /**
      * 用户头像地址
      */
     private String headUrl;

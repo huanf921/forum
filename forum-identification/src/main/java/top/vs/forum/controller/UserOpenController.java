@@ -1,10 +1,9 @@
 package top.vs.forum.controller;
 
+import cn.hutool.crypto.SecureUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import top.vs.forum.dto.ResultDTO;
 import top.vs.forum.po.User;
 import top.vs.forum.service.UserService;
@@ -40,16 +39,16 @@ public class UserOpenController {
     }
 
     /**
-     * 修改用户密码
-     * @param userId
+     * 修改用户基础信息
      * @return
      */
-    @GetMapping("/update/user/pwd/{userId}")
-    public ResultDTO updateUserPwd(@PathVariable("userId") Integer userId) {
-        User condition = new User();
-        condition.setId(userId);
+    @PostMapping("/update/user/base/info")
+    public ResultDTO updateUserBaseInfo(@RequestBody User user) {
         try {
-            userService.updateById(condition);
+            if (user.getPassword() != null) {
+                user.setPassword(SecureUtil.md5(user.getPassword()));
+            }
+            userService.updateById(user);
             return ResultDTO.ok();
         } catch (Exception e) {
             return ResultDTO.error("500", e.getMessage());

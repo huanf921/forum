@@ -1,11 +1,11 @@
 package top.vs.forum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.multipart.MultipartFile;
 import top.vs.forum.dto.UserBriefInfoDTO;
 import top.vs.forum.dto.UserDetailInfoDTO;
 import top.vs.forum.dto.UserSimpleDTO;
 import top.vs.forum.po.UserDetail;
-import top.vs.forum.vo.UserInfoVO;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
  * @author visional
  * @since 2021-03-09
  */
-public interface UserDetailService extends IService<UserDetail> {
+public interface UserDetailService extends IService<UserDetail>{
 
     UserSimpleDTO getUserSimpleInfoById(Integer userId);
 
@@ -28,4 +28,12 @@ public interface UserDetailService extends IService<UserDetail> {
     UserBriefInfoDTO getUserBriefInfo(Integer userId);
 
     UserDetailInfoDTO getUserDetailInfo(Integer userId);
+
+    void updUserDetailInfo(UserDetailInfoDTO userDetailInfo);
+
+    void saveUserAlbum(MultipartFile file, Integer userId);
+
+    void removeUserAlbum(Integer userId, String albumUrl);
+
+    void updUserHeadUrl(MultipartFile file, Integer userId);
 }

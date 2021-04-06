@@ -1,11 +1,14 @@
 package top.vs.forum.service.impl;
 
+import cn.hutool.core.io.FileUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import top.vs.forum.api.ForumIdentFeignClient;
 import top.vs.forum.dto.UserBriefInfoDTO;
 import top.vs.forum.dto.UserDetailInfoDTO;
@@ -17,7 +20,10 @@ import top.vs.forum.po.UserAlbum;
 import top.vs.forum.po.UserDetail;
 import top.vs.forum.service.UserAlbumService;
 import top.vs.forum.service.UserDetailService;
+import top.vs.forum.util.ForumFileUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +46,9 @@ public class UserDetailServiceImpl extends ServiceImpl<UserDetailMapper, UserDet
 
     @Autowired
     private UserAlbumService userAlbumService;
+
+    @Value("${file.album.upload}")
+    private String albumUploadPath;
 
     @Override
     public UserSimpleDTO getUserSimpleInfoById(Integer userId) {
@@ -83,14 +92,69 @@ public class UserDetailServiceImpl extends ServiceImpl<UserDetailMapper, UserDet
         return getUserInfo(userId, false);
     }
 
+    @Override
+    public void updUserDetailInfo(UserDetailInfoDTO userDetailInfo) {
+        if (userDetailInfo.getName() != null || userDetailInfo.getPassword() != null) {
+            User user = new User();
+            user.setId(userDetailInfo.getUserId());
+            user.setName(userDetailInfo.getName());
+            user.setPassword(userDetailInfo.getPassword());
+            forumIdentFeignClient.updateUserBaseInfo(user);
+        }
+        UserDetail updUserDetailDTO = new UserDetail();
+        BeanUtils.copyProperties(userDetailInfo, updUserDetailDTO);
+        this.update(updUserDetailDTO, new LambdaQueryWrapper<UserDetail>()
+                .eq(UserDetail::getUserId, userDetailInfo.getUserId()));
+    }
+
+    @Override
+    public void saveUserAlbum(MultipartFile file, Integer userId) {
+        // 保存相册图片，获取其当前存储的相对路径
+        String userAlbumPath = saveUserFile(file, userId);
+
+        // 新增相册表信息
+        UserAlbum userAlbum = new UserAlbum();
+        userAlbum.setUserId(userId);
+        userAlbum.setPicUrl(userAlbumPath);
+        userAlbumService.save(userAlbum);
+    }
+
+    @Override
+    public void removeUserAlbum(Integer userId, String albumUrl) {
+        // 删除相册表信息
+        userAlbumService.remove(new LambdaQueryWrapper<UserAlbum>()
+                .eq(UserAlbum::getUserId, userId)
+                .eq(UserAlbum::getPicUrl, albumUrl));
+
+        // 删除用户对应存储路径下的相册图片
+        removeUserFile(albumUrl);
+    }
+
+    @Override
+    public void updUserHeadUrl(MultipartFile file, Integer userId) {
+        String originUrl = this.getUserHeadUrlById(userId);
+
+        // 删除原用户头像
+        removeUserFile(originUrl);
+
+        // 上传新头像到对应文件目录中
+        String userHeadPath = saveUserFile(file, userId);
+
+        // 更新用户详情表信息
+        UserDetail updUserDetail = new UserDetail();
+        updUserDetail.setHeadUrl(userHeadPath);
+        this.update(updUserDetail, new LambdaQueryWrapper<UserDetail>().eq(UserDetail::getUserId, userId));
+
+    }
+
     /**
-     * 封装复用方法
+     * 获取用户信息
      * @param userId
      * @return
      */
     private UserDetailInfoDTO getUserInfo(Integer userId, boolean isBrief) {
         UserDetailInfoDTO userDetailInfoDTO = new UserDetailInfoDTO();
-        // 1、远程获取用户名
+        // 1、远程获取用户基础信息
         User user = forumIdentFeignClient.getUserBaseInfo(userId).getData();
         userDetailInfoDTO.setName(user.getName());
         if (isBrief) {
@@ -101,19 +165,22 @@ public class UserDetailServiceImpl extends ServiceImpl<UserDetailMapper, UserDet
             userDetailInfoDTO.setHeadUrl(userDetail.getHeadUrl());
             userDetailInfoDTO.setIntroduction(userDetail.getIntroduction());
         } else {
-            // 2、数据库获取用户详细信息以及相册图片地址列表
+            // 2、数据库获取用户详细信息
             UserDetail userDetail = this.getOne(new LambdaQueryWrapper<UserDetail>()
                     .eq(UserDetail::getUserId, userId));
             BeanUtils.copyProperties(userDetail, userDetailInfoDTO);
-            List<String> albumUrls = userAlbumService.list(new LambdaQueryWrapper<UserAlbum>()
-                    .select(UserAlbum::getPicUrl)
-                    .eq(UserAlbum::getUserId, userId))
-                    .stream()
-                    .map(UserAlbum::getPicUrl)
-                    .collect(Collectors.toList());
-            log.warn(albumUrls.toString());
-            userDetailInfoDTO.setAlbumUrls(albumUrls);
+
+            userDetailInfoDTO.setPassword(user.getPassword());
         }
+        // 相册图片地址列表
+        List<String> albumUrls = userAlbumService.list(new LambdaQueryWrapper<UserAlbum>()
+                .select(UserAlbum::getPicUrl)
+                .eq(UserAlbum::getUserId, userId))
+                .stream()
+                .map(UserAlbum::getPicUrl)
+                .collect(Collectors.toList());
+        userDetailInfoDTO.setAlbumUrls(albumUrls);
+
         // 3、缓存获取两排名+总访问量+粉丝数
         UserSimpleRedisDTO userSimpleRedisDTO =
                 (UserSimpleRedisDTO) redisTemplate.opsForHash().get("user:simple:info", userId);
@@ -125,5 +192,42 @@ public class UserDetailServiceImpl extends ServiceImpl<UserDetailMapper, UserDet
         userDetailInfoDTO.setWeekRanking(weekRanking);
 
         return userDetailInfoDTO;
+    }
+
+    /**
+     * 根据数据库文件地址删除用户对应存储路径下的文件
+     * @param fileDbUrl
+     */
+    private void removeUserFile(String fileDbUrl){
+        int firstIdx = fileDbUrl.indexOf("/");
+        String subUrl = fileDbUrl.substring(firstIdx + 1);
+        int secIdx = subUrl.indexOf("/");
+        String relativePath = fileDbUrl.substring(secIdx + 1);
+
+        FileUtil.del(albumUploadPath + relativePath);
+    }
+
+    /**
+     * 保存上传的文件并返回文件存储时的相对路径
+     * @param file
+     * @param userId
+     */
+    private String saveUserFile(MultipartFile file, Integer userId) {
+        String originalFilename = file.getOriginalFilename();
+        String filePath = albumUploadPath + userId;
+        File randomFile = ForumFileUtil.getRandomFile(originalFilename, filePath);
+
+        // 保存图片
+        try {
+            file.transferTo(randomFile);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+
+        // 获取当前存储路径
+        String randomFileName = randomFile.getName();
+        String userFilePath = "/album/" + userId + "/" + randomFileName;
+
+        return userFilePath;
     }
 }

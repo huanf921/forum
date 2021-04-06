@@ -1,11 +1,13 @@
 package top.vs.forum.controller;
 
+import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +41,12 @@ public class UserController {
     @Autowired
     private ForumUserFeignClient forumUserFeignClient;
 
+    @Value("${file.post.file}")
+    private String postFilePath;
+
+    @Value("${file.album.upload}")
+    private String albumUploadPath;
+
     @GetMapping("/")
     public String showPortalPage(ModelMap modelMap, HttpSession session) {
         setPageHotData(modelMap);
@@ -58,7 +66,11 @@ public class UserController {
             user.setPassword(SecureUtil.md5(user.getPassword()));
             userService.save(user);
             // 在缓存中初始化用户的粉丝数及其访问量
-            userService.initRedisUserSimpleInfo(userService.getOne(wrapper).getId());
+            Integer userId = userService.getOne(wrapper).getId();
+            userService.initRedisUserSimpleInfo(userId);
+            // 在文件管理器中初始化用户的相册目录和资料文件目录
+            FileUtil.mkdir(postFilePath + userId);
+            FileUtil.mkdir(albumUploadPath + userId);
             map.addAttribute(ForumConstant.ATTR_NAME_MESSAGE, ForumConstant.MESSAGE_TO_LOGIN);
         } else {
             map.addAttribute(ForumConstant.ATTR_NAME_MESSAGE, ForumConstant.MESSAGE_LOGIN_ACCT_ALREADY_IN_USE);

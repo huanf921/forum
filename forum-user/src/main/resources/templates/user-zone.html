@@ -253,6 +253,40 @@
         };
         $(function () {
             $("#portal").removeClass("active")
+
+            // 页面加载时获取用户简要信息
+            let albumUrls = null
+            $.ajax({
+                "url":"/user/get/user/brief/info/" + [[${session.loginUser.id}]],
+                "type":"get",
+                // "data":{
+                //     "phoneNum":phoneNum
+                // },
+                "dataType":"json",
+                "success":function (responseData){
+                    let code = responseData.code;
+                    if(code == "200") {
+                        let data = responseData.data;
+                        $(".table1").text(data.name + "的空间")
+                        $(".user-top-in-name").text(data.name)
+                        $(".table2").text(data.introduction)
+                        $(".headImg").attr("src", data.headUrl)
+                        $(".user-top-in-type3").eq(0).text(data.weekRanking + 1)
+                        $(".user-top-in-type3").eq(1).text(data.allRanking + 1)
+                        $(".user-top-in-type3").eq(2).text(data.allVisits)
+                        $(".user-top-in-type3").eq(3).text(data.fans)
+
+                        // 初始化用户相册列表
+                        albumUrls = data.albumUrls
+                    } else {
+                        layer.msg("获取用户简要信息失败：" + responseData.message);
+                    }
+                },
+                "error":function(response){
+                    layer.msg(response.status + " " + response.statusText);
+                }
+            })
+
             // 相册 论坛 收藏 关注按钮事件
             $("#button1").click(function () {
                 removecolor();
@@ -273,36 +307,25 @@
                 removecolor();
                 $("#button4").addClass("buttoncolor");
                 $("#xiangce").removeClass("div-right");
+
+                for (let i = 0; i < albumUrls.length; i++) {
+                    let albumUrl = albumUrls[i];
+                    let rowDiv = "<div class='row'></div>"
+                    let albumPic =
+                        "<div class=\"col-sm-6 col-md-3\">\n" +
+                        "    <a class=\"thumbnail\">\n" +
+                        "        <img src=\"" + albumUrl + "\"\n" +
+                        "             alt=\"通用的占位符缩略图\">\n" +
+                        "    </a>\n" +
+                        "</div>"
+                    $("#xiangce").append(albumPic)
+                    if ((i + 1) % 4 == 0) {
+                        $("#xiangce").append(rowDiv)
+                    }
+
+                }
             });
 
-            // 页面加载时获取用户简要信息
-            $.ajax({
-                "url":"/user/get/user/brief/info/" + [[${session.loginUser.id}]],
-                "type":"get",
-                // "data":{
-                //     "phoneNum":phoneNum
-                // },
-                "dataType":"json",
-                "success":function (responseData){
-                    let code = responseData.code;
-                    if(code == "200") {
-                        let data = responseData.data;
-                        $(".table1").text(data.name + "的空间")
-                        $(".user-top-in-name").text(data.name)
-                        $(".table2").text(data.introduction)
-                        $(".headImg").attr("src", data.headUrl)
-                        $(".user-top-in-type3").eq(0).text(data.weekRanking + 1)
-                        $(".user-top-in-type3").eq(1).text(data.allRanking + 1)
-                        $(".user-top-in-type3").eq(2).text(data.allVisits)
-                        $(".user-top-in-type3").eq(3).text(data.fans)
-                    } else {
-                        layer.msg("获取用户简要信息失败：" + responseData.message);
-                    }
-                },
-                "error":function(response){
-                    layer.msg(response.status + " " + response.statusText);
-                }
-            })
         });
     </script>
 </head>
@@ -405,30 +428,7 @@
                             </div>
                             <!-- 相册 -->
                             <div class="div-right row" id="xiangce">
-                                <div class="col-sm-6 col-md-3">
-                                    <a href="#" class="thumbnail">
-                                        <img src="https://static.runoob.com/images/mix/img_avatar.png"
-                                             alt="通用的占位符缩略图">
-                                    </a>
-                                </div>
-                                <div class="col-sm-6 col-md-3">
-                                    <a href="#" class="thumbnail">
-                                        <img src="https://static.runoob.com/images/mix/img_avatar.png"
-                                             alt="通用的占位符缩略图">
-                                    </a>
-                                </div>
-                                <div class="col-sm-6 col-md-3">
-                                    <a href="#" class="thumbnail">
-                                        <img src="https://static.runoob.com/images/mix/img_avatar.png"
-                                             alt="通用的占位符缩略图">
-                                    </a>
-                                </div>
-                                <div class="col-sm-6 col-md-3">
-                                    <a href="#" class="thumbnail">
-                                        <img src="https://static.runoob.com/images/mix/img_avatar.png"
-                                             alt="通用的占位符缩略图">
-                                    </a>
-                                </div>
+
                             </div>
                         </div>
                     </div>

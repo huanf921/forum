@@ -6,6 +6,13 @@
     <base th:href="@{/}"/>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <style>
+
+        .form-signin {
+            max-width: 330px;
+            padding: 15px;
+            margin: 0 auto;
+        }
+
         .div0 {
             min-width: 970px;
             background-color: #f5f6f7;
@@ -175,16 +182,97 @@
         .thumbnail1:hover {
             opacity: 0.7;
         }
+
+        .headImgUpd:hover {
+            cursor: pointer;
+        }
+
+        .albumPicHover{
+            display: none
+        }
     </style>
     <script src='js/iconfont.js'></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.form.js"></script>
     <script src="layer/layer.js"></script>
-    <script>
+    <script th:inline="javascript">
+        let len = 0;
+
         function removecolor() {
             $("#button1,#button2,#button3").removeClass("buttoncolor");
             $("#luntan,#shoucang,#xiangce").addClass("div-right");
-        };
+        }
+
+        // 定义相册中当前图片的鼠标进入时触发的事件函数
+        function albumPicMouseEnter(obj, idx){
+            // thumbnail的样式中有内边距4px以及边框1px
+            // console.log(obj.eq(idx))
+            let width = obj.eq(idx)[0].offsetWidth - 4 * 2
+            let height = obj.eq(idx)[0].offsetHeight - 4 * 2
+            // console.log(width + " " + height)
+            $(".albumPicRem").eq(idx).css({"z-index":"1","position":"absolute",
+                "top":"0px", "opacity":"0.4"})
+
+            $(".albumPicRem img").eq(idx).css({"width": width, "height":height})
+            $(".albumPicRem").eq(idx).removeClass("albumPicHover")
+        }
+
+        // 定义鼠标离开“减号”图片时触发的事件函数
+        function albumPicRemMouseLeave(idx){
+            $(".albumPicRem").eq(idx).addClass("albumPicHover")
+        }
+
+        // 定义鼠标进入头像时触发的事件函数
+        function headImgMouseEnter(){
+            $(".headImgUpd").eq(0).removeClass("albumPicHover")
+        }
+
+        // 定义鼠标离开“设置”图片时触发的事件函数
+        function headImgUpdMouseLeave(){
+            $(".headImgUpd").eq(0).addClass("albumPicHover")
+        }
+
+        // 7、定义减号图片的点击函数，发送请求删除当前相册图片
+        function remAlbumPic(obj) {
+            console.log(obj)
+            let albumUrl = obj.attr("src")
+            console.log(albumUrl)
+            $.ajax({
+                url:"/user/remove/user/album?albumUrl=" + albumUrl,
+                type:"get",
+                dataType:"json",  //缺失会出现URL编码，无法转成json对象
+                success:function(res){
+                    if(res.code == "200") {
+                        layer.open({
+                            title: '提示',
+                            content: '删除成功'
+                            ,btn: ['确定']
+                            ,btn1: function(index, layero){
+                                layer.close(index)
+                                // 刷新页面
+                                window.location.reload()
+                            }
+                        })
+                    } else {
+                        layer.open({
+                            title: '提示',
+                            content: '删除失败，服务器繁忙'
+                            ,btn: ['确定']
+                            ,btn1: function(index, layero){
+                                layer.close(index)
+                            }
+                        })
+                        console.log("相册删除失败，错误信息：" + res.message)
+                    }
+                },
+                error:function (res){
+                    layer.msg("相册删除失败：" + res.status)
+                    console.log("相册删除失败，错误信息：" + res.statusText)
+                }
+            });
+        }
+
         $(function () {
             $("#portal").removeClass("active")
             $("#mine").addClass("active")
@@ -232,10 +320,18 @@
                         $(".user-top-in-type3").eq(2).text(data.allVisits)
                         $(".user-top-in-type3").eq(3).text(data.fans)
 
+                        // 对头像做悬浮样式处理
+
+
                         // 个人信息
                         $(":input[name='name']").val(data.name)
                         $(":input[name='userId']").val(data.userId)
-                        $(":input[name='sex']").val(data.sex)
+                        if (data.sex == "男") {
+                            $(":input[name='sex']").eq(0).attr("checked", "checked")
+                        } else {
+                            $(":input[name='sex']").eq(1).attr("checked", "checked")
+                        }
+
                         $("#ta").val(data.introduction)
                         $(":input[name='birthday']").val(data.birthday)
 
@@ -245,44 +341,49 @@
 
                         // 相册管理
                         let urls = data.albumUrls;
-                        let plus =
-                            "<label for=\"file\" class=\"col-sm-6 col-md-3\">\n" +
-                            "<a class=\"thumbnail\">\n" +
-                            "<img src=\"img/+.jpg\" alt=\"通用的占位符缩略图\" class=\"thumbnail1\">\n" +
-                            "</a>\n" +
-                            "</label>\n" +
-                            "<input type=\"file\" id=\"file\" style=\"display: none\"/>"
-                        if (urls == null || urls.length == 0) {
-                            $("#xiangce").append(plus)
-                        } else {
-                            for (let i = 0; i < urls.length; i++) {
+                        if (urls != null && urls.length != 0) {
+                            let rowDiv = "<div class='row'></div>"
+                            len = urls.length;
+                            for (let i = 0; i < len; i++) {
                                 let url = urls[i];
-                                console.log("取到的图片路径"+url)
+                                // console.log("取到的图片路径"+url)
                                 let albumPic =
                                     "<div class=\"col-sm-6 col-md-3\">\n" +
-                                    "    <a class=\"thumbnail\">\n" +
-                                    "        <img src='" + url + "' alt=\"通用的占位符缩略图\">\n" +
+                                    "    <a class=\"thumbnail albumPic\">\n" +
+                                    "        <img src=\"" + url + "\" alt=\"通用的占位符缩略图\">\n" +
+                                    "    </a>\n" +
+                                    "    <a class=\"thumbnail albumPicHover albumPicRem\">\n" +
+                                    "        <img src=\"img/-.jpg\" alt=\"通用的占位符缩略图\">\n" +
                                     "    </a>\n" +
                                     "</div>"
-                                $("#xiangce").append(albumPic)
+                                $("#albumForm").before(albumPic)
+                                if ((i + 1) % 4 == 0) {
+                                    $("#albumForm").before(rowDiv)
+                                }
+
+                                // 绑定鼠标进入相册图片的函数
+                                $(".albumPic").eq(i).bind("mouseenter", function () {
+                                    albumPicMouseEnter($(".albumPic"), i)
+                                })
+                                // 绑定鼠标离开减号图片的函数
+                                $(".albumPicRem").eq(i).bind("mouseleave", function(){
+                                    albumPicRemMouseLeave(i)
+                                })
+                                // 绑定鼠标点击减号图片的函数
+                                $(".albumPicRem").eq(i).click(function (){
+                                    remAlbumPic($(".albumPic img").eq(i))
+                                })
+
                             }
-                            $("#xiangce").append(plus)
                         }
                         // <div class="col-sm-6 col-md-3">
                         //     <a class="thumbnail">
-                        //         <img src="https://static.runoob.com/images/mix/img_avatar.png"
-                        //              alt="通用的占位符缩略图">
+                        //         <img class="albumPic" src="url" alt="通用的占位符缩略图">
+                        //     </a>
+                        //     <a class="thumbnail albumPicHover albumPicRem">
+                        //         <img src="img/+.jpg" alt="通用的占位符缩略图">
                         //     </a>
                         // </div>
-
-                        // <label for="file" class="col-sm-6 col-md-3">
-                        //     <a class="thumbnail">
-                        //         <img src="img/+.jpg"
-                        //              alt="通用的占位符缩略图" class="thumbnail1">
-                        //     </a>
-                        // </label>
-                        // <input type="file" id="file" style="display: none"/>
-
                     } else {
                         layer.msg("获取用户信息失败：" + responseData.message);
                     }
@@ -294,30 +395,246 @@
 
             })
 
-            $(".form-button").click(() => {
+            // 绑定鼠标进入头像图片的函数
+            $(".headImg").eq(0).bind("mouseenter", function () {
+                headImgMouseEnter()
+            })
+            // 绑定鼠标离开头像设置图片的函数
+            $(".headImgUpd").eq(0).bind("mouseleave", function(){
+                headImgUpdMouseLeave()
+            })
 
+            /**
+             * 定义函数：自动将form表单封装成json对象
+             */
+            // $.fn.serializeObject = function() {
+            //     var o = {};
+            //     var a = this.serializeArray();
+            //     $.each(a, function() {
+            //         if (o[this.name]) {
+            //             if (!o[this.name].push) {
+            //                 o[this.name] = [ o[this.name] ];
+            //             }
+            //             o[this.name].push(this.value || '');
+            //         } else {
+            //             o[this.name] = this.value || '';
+            //         }
+            //     });
+            //     return o;
+            // };
+
+            // 2、json格式提交表单数据
+            $(".form-button").click(() => {
+                // console.log(JSON.stringify($("#personalInfoForm")))
+                // console.log(JSON.stringify($("#personalInfoForm").serializeObject()))
+                // console.log(typeof ($(":input[name='userId']").val()))
+                // console.log($(":input[name='name']").val())
+                // console.log($("input[name='sex']:checked").val())
+                // console.log($(":input[name='birthday']").val())
+                // console.log($(":input[name='introduction']").val())
+                let data = {
+                    "name": $(":input[name='name']").val(),
+                    "userId": $(":input[name='userId']").val(),
+                    "sex": $("input[name='sex']:checked").val(),
+                    "birthday": $(":input[name='birthday']").val(),
+                    "introduction": $(":input[name='introduction']").val()
+                }
+                $.ajax({
+                    "url":"/user/upd/user/detail/info",
+                    "type":"post",
+                    "data":JSON.stringify(data),
+                    "contentType":"application/json;charset=utf-8",  //缺失会出现URL编码，无法转成json对象
+                    "dataType":"json",
+                    "success":function(res){
+
+                        if(res.code == "200") {
+                            layer.msg("保存成功")
+                        } else {
+                            layer.msg("保存失败：" + res.code)
+                            console.log("个人信息保存失败，错误信息：" + res.message)
+                        }
+                    },
+                    "error":function (res){
+                        layer.msg("保存失败：" + res.status)
+                        console.log("个人信息保存失败，错误信息：" + res.statusText)
+                    }
+                });
+            })
+
+            // 3、修改密码、手机、邮箱的函数
+            function updAccountInfo(userId, password, phone, email) {
+                let queryData = {
+                    "userId": userId,
+                    "password": password,
+                    "phone": phone,
+                    "email": email
+                }
+                $.ajax({
+                    url:"/user/upd/user/detail/info",
+                    type:"POST",
+                    data:JSON.stringify(queryData),
+                    contentType:"application/json",  //缺失会出现URL编码，无法转成json对象
+                    success:function(res){
+                        $("#updModal").modal("hide");
+                        if(res.code == "200") {
+                            if (phone === "" || phone){
+                                $("#phone").text(phone)
+                            } else if (email === "" || email) {
+                                $("#email").text(email)
+                            }
+                            layer.msg("修改成功")
+                        } else {
+                            layer.msg("修改失败：" + res.code)
+                            console.log("账户信息修改失败，错误信息：" + res.message)
+                        }
+                    },
+                    error:function (res){
+                        layer.msg("修改失败：" + res.status)
+                        console.log("账户信息修改失败，错误信息：" + res.statusText)
+                    }
+                });
+            }
+
+            let curUpdType = ""
+
+            // 4、模态框弹出定制函数
+            function showUpdModal(type, placeholder, title) {
+                $("#updRgx").text("")
+                $(":input[name='updInput']").val("")
+                $(":input[name='updInput']").attr("type", type)
+                $(":input[name='updInput']").attr("placeholder", placeholder)
+                $(".modal-title").text(title)
+                $("#updModal").modal("show");
+            }
+
+            // 5、分别绑定账号管理模块下几个模态框弹出并对其按钮事件进行处理
+            $(".account-list-span").eq(0).click(function (){
+                curUpdType = "password"
+                showUpdModal("password", "请输入密码", "修改密码")
+                $("#updBtn").click(function (){
+                    if (curUpdType == "password") {
+                        let userId = $(":input[name='userId']").val()
+                        let password = $(":input[name='updInput']").val()
+                        if (password === null || password === "") {
+                            // console.log(password)
+                            // console.log(password === null)
+                            $("#updRgx").text("密码不能修改为空")
+                            return ;
+                        }
+                        updAccountInfo(userId, password)
+                    }
+                })
+            })
+            $(".account-list-span").eq(1).click(function (){
+                curUpdType = "phone"
+                showUpdModal("text", "请输入手机号", "修改手机")
+                $("#updBtn").click(function (){
+                    if (curUpdType == "phone") {
+                        let rgxExp = /^[1][3,4,5,7,8][0-9]{9}$/
+                        let rgxErrInfo = "请输入正确的手机号"
+                        let userId = $(":input[name='userId']").val()
+                        let phone = $(":input[name='updInput']").val()
+                        if (phone === "" || rgxExp.test(phone)) {
+                            updAccountInfo(userId, null, phone)
+                        } else {
+                            $("#updRgx").text(rgxErrInfo)
+                            return ;
+                        }
+                    }
+                })
+            })
+            $(".account-list-span").eq(2).click(function (){
+                curUpdType = "email"
+                showUpdModal("text", "请输入邮箱", "修改邮箱")
+                $("#updBtn").click(function (){
+                    if (curUpdType == "email") {
+                        let rgxExp = /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/
+                        let rgxErrInfo = "请输入正确的邮箱地址"
+                        let userId = $(":input[name='userId']").val()
+                        let email = $(":input[name='updInput']").val()
+                        if (email === "" || rgxExp.test(email)){
+                            updAccountInfo(userId, null, null, email)
+                        } else {
+                            $("#updRgx").text(rgxErrInfo)
+                            return
+                        }
+
+                    }
+                })
+            })
+
+            // 6、绑定表单ajax方式提交事件
+            $("#albumForm").ajaxForm(function (res) {
+                if (res.code == "200") {
+                    layer.open({
+                        title: '提示',
+                        content: '上传成功'
+                        ,btn: ['确定']
+                        ,btn1: function(index, layero){
+                            layer.close(index)
+                            // 刷新页面
+                            window.location.reload()
+                        }
+                    })
+                } else {
+                    layer.open({
+                        title: '提示',
+                        content: '服务器繁忙'
+                        ,btn: ['确定']
+                        ,btn1: function(index, layero){
+                            layer.close(index)
+                        }
+                    })
+                    console.log("相册上传失败，错误信息：" + res.message)
+                }
+            })
+
+            $("#headForm").ajaxForm(function (res) {
+                if (res.code == "200") {
+                    layer.open({
+                        title: '提示',
+                        content: '头像上传成功'
+                        ,btn: ['确定']
+                        ,btn1: function(index, layero){
+                            layer.close(index)
+                            // 刷新页面
+                            window.location.reload()
+                        }
+                    })
+                } else {
+                    layer.open({
+                        title: '提示',
+                        content: '头像上传失败，服务器繁忙'
+                        ,btn: ['确定']
+                        ,btn1: function(index, layero){
+                            layer.close(index)
+                        }
+                    })
+                    console.log("相册上传失败，错误信息：" + res.message)
+                }
             })
         });
-
-        // function add() {
-        //     var html = "<div class='col-sm-4'><div class='panel panel-info'><div class='panel-heading'><i class='fa fa-times'></i></div><div class='panel-body' style='text-align: center;'><div class='row'><div class='col-sm-12 col-md-12'><img class='updateimg img-responsive' src='img/p_big3.jpg' style='width: inherit;height: 210px;'/></div></div></div></div></div>";
-        //     var html2 = "<div class='col-sm-6 col-md-3'><a  class='thumbnail'><img class='updateimg img-responsive' src='img/p_big3.jpg' alt='通用的占位符缩略图'></a></div>"
-        //     $("#xiangce").after(html2);
-        // }
-
     </script>
 </head>
 <body>
     <div class="div0">
         <div th:replace="nav-head :: head"></div>
+        <div th:replace="modal-upd :: upd"></div>
         <div class="container">
             <div class="row row1">
                 <div class="col-lg-12" style="">
 
                     <div class="user-top">
                         <div class="user-top-in">
-                            <img src="https://static.runoob.com/images/mix/img_avatar.png"
-                                 class="img-circle user-top-in-img headImg" style="width:100px">
+                            <form id="headForm" method="post" enctype="multipart/form-data" action="/user/upd/user/head/url">
+                                <input type="file" name="file" id="headImg" style="display: none" />
+                            </form>
+                            <label for="headImg">
+                                <img src="https://static.runoob.com/images/mix/img_avatar.png"
+                                     class="img-circle user-top-in-img headImg" style="width:100px">
+                                <img src="img/setting.png"
+                                     class="img-circle user-top-in-img headImgUpd albumPicHover" style="z-index:2;opacity:0.4;width:100px">
+                            </label>
                             <th:block th:if="${session.loginUser} != null">
                                 <div class="user-top-in-name">[[${session.loginUser.name}]]</div>
                             </th:block>
@@ -349,7 +666,7 @@
                         <div class="panel-body">
                             <!-- 论坛 -->
                             <div class="" id="luntan" style="position: relative;margin-bottom: 60px;">
-                                <form class="form-horizontal" role="form">
+                                <form id="personalInfoForm" class="form-horizontal" role="form">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">
                                             用户昵称
@@ -373,7 +690,7 @@
                                     <div class="form-group">
                                         <label class="radio-inline">
                                             <input type="radio" name="sex" id="optionsRadios3"
-                                                   value="男" checked> 男
+                                                   value="男"> 男
                                         </label>
                                         <label class="radio-inline">
                                             <input type="radio" name="sex" id="optionsRadios4"
@@ -421,8 +738,17 @@
                             </div>
                             <!-- xiangce -->
                             <div class="div-right" id="xiangce">
-
-
+                                <div class="row">
+                                    <form id="albumForm" method="post" enctype="multipart/form-data" action="/user/save/user/album">
+                                        <label for="file" class="col-sm-6 col-md-3">
+                                            <a  class="thumbnail">
+                                                <img src="img/+.jpg"
+                                                     alt="通用的占位符缩略图" class="thumbnail1">
+                                            </a>
+                                        </label>
+                                        <input type="file" name="file" id="file" style="display: none" />
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -439,17 +765,81 @@
     </div>
 </body>
 <script>
-    document.getElementById('file').onchange = function () {
-        console.log("文件上传到页面端了")
-        // add();
-        // var imgFile = this.files[0];
-        // var fr = new FileReader();
-        // fr.onload = function () {
-        //     var imgs = document.getElementsByClassName('updateimg');//获取所有img元素
-        //     imgs[imgs.length - 1].src = fr.result;//设置最后一个img的src值
-        //     /*document.getElementById('image').getElementsByTagName('img')[0].src = fr.result;*/
-        // };
-        // fr.readAsDataURL(imgFile);
+    document.getElementById('file').onchange = function() {
+        // let that = this
+        // console.log("文件正在上传到页面端")
+        let toUploadFile = this.files[0];
+        let fr = new FileReader();
+        let rowDiv = "<div class='row'></div>"
+        let toUploadPic =
+            "<div id='toUploadPic' class=\"col-sm-6 col-md-3\">\n" +
+            "    <a class=\"thumbnail\">\n" +
+            "        <img id='uploadImg' alt=\"通用的占位符缩略图\">\n" +
+            "    </a>\n" +
+            "</div>"
+
+        $("#albumForm").before(toUploadPic)
+        if ((len + 1 + 1) % 4 == 0) {
+            $("#albumForm").before(rowDiv)
+        }
+        fr.onload = function () {
+            $("#uploadImg").attr("src", fr.result) //设置欲上传图片的src值
+        };
+        fr.readAsDataURL(toUploadFile);
+
+        // 弹框提示是否上传
+        layer.open({
+            title: '上传确认',
+            content: '是否将当前添加的图片上传到您的个人相册中'
+            ,btn: ['上传', '撤销']
+            ,btn1: function(index, layero){
+                layer.close(index)
+                // 执行表单上传
+                $("#albumForm").submit()
+                // console.log("表单已上传")
+            }
+            ,btn2: function(index, layero){
+                // 将图片删除
+                $("#toUploadPic").remove()
+                // 重置表单
+                $("#albumForm")[0].reset()
+                // console.log(that.value)
+                // console.log(that.files[0])
+            }
+        })
+
+    }
+    document.getElementById('headImg').onchange = function() {
+        let toUploadHeadImg = this.files[0];
+        let fr = new FileReader();
+        let originUrl = null;
+        fr.onload = function () {
+            originUrl = $(".headImg").eq(0).attr("src")
+            $(".headImg").attr("src", fr.result) //设置欲上传图片的src值
+        };
+        fr.readAsDataURL(toUploadHeadImg);
+
+        // 弹框提示是否上传
+        layer.open({
+            title: '上传确认',
+            content: '是否将当前修改的头像上传到您的个人中心'
+            ,btn: ['上传', '撤销']
+            ,btn1: function(index, layero){
+                layer.close(index)
+                // 执行表单上传
+                $("#headForm").submit()
+                // console.log("表单已上传")
+            }
+            ,btn2: function(index, layero){
+                // 将头像恢复
+                $(".headImg").attr("src", originUrl)
+                // 重置表单
+                $("#headForm")[0].reset()
+                // console.log(that.value)
+                // console.log(that.files[0])
+            }
+        })
+
     }
 </script>
 </html>
