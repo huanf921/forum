@@ -36,4 +36,6 @@ public interface UserDetailService extends IService<UserDetail>{
     void removeUserAlbum(Integer userId, String albumUrl);
 
     void updUserHeadUrl(MultipartFile file, Integer userId);
+
+    void updRedisUserVisits(Integer userId);
 }

@@ -18,12 +18,12 @@ public class UserSimpleRedisDTO implements Serializable {
     private Integer userId;
 
     /**
-     * 总访问量(论贴+空间)
+     * 总访问量(论帖+空间)
      */
     private Integer allVisits;
 
     /**
-     * 周访问量(论贴+空间)
+     * 周访问量(论帖+空间)
      */
     private Integer weekVisits;
 

@@ -7,14 +7,11 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import top.vs.forum.api.ForumIdentFeignClient;
 import top.vs.forum.dto.UserSimpleRedisDTO;
 import top.vs.forum.po.UserDetail;
 import top.vs.forum.service.UserDetailService;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 启动时事件
@@ -28,9 +25,6 @@ public class StartUpEvent implements ApplicationRunner {
 
     @Autowired
     private UserDetailService userDetailService;
-
-    @Autowired
-    private ForumIdentFeignClient forumIdentFeignClient;
 
     /**
      * 启动时进行系统常用的用户初始数据缓存操作

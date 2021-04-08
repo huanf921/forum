@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <base th:href="@{/}"/>
+        <title>[[${type}]]</title>
+        <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+        <style>
+    .div0{
+        min-width:970px;
+        background-color: #f5f6f7;
+        /*background-color: rgb(250, 250, 250);*/
+        /*background: url(beijing.jpg);*/
+        min-height: 1000px;
+    }
+
+    /* ======================= */
+    /* ===阿里图库的图片样式 === */
+    /* ======================= */
+    .icon,.icon-a{
+        width: 1em;
+        height: 1em;
+        vertical-align: -0.15em;
+        fill: currentColor;
+        overflow: hidden;
+    }
+    .row1{
+        margin-top: 64px;
+    }    /* right */
+    .div-right{
+        display: none;
+    }
+    a{
+        cursor: pointer;
+    }
+    .buttoncolor{
+        background-color: #eee;
+    }
+    .xiaoxi{
+        position: relative;
+        height: 80px;
+        padding-bottom: 20px;
+        overflow: hidden;
+        border-bottom:solid 1px #ddd;
+    }
+    .xiaoxi-top{
+        position: absolute;
+        left: 40px;
+        top: 14px;
+        font-size: 16px;
+        color: #bbb;
+    }
+    .xiaoxi-name{
+        color: dodgerblue;
+        cursor: pointer;
+    }
+    .xiaoxi-img{
+        position: absolute;
+        top: 15px;
+        left: 10px;
+    }
+    .xiaoxi-body{
+        position: absolute;
+        left: 20px;
+        top: 45px;
+        font-size: 15px;
+        color: #222;
+
+        width: 40em;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .xiaoxi-data{
+        position: absolute;
+        right: 20px;
+        bottom: 0px;
+        color: #ccc;
+
+    }
+    .right-bottom{
+        /* border:solid 1px rgb(170, 170, 170);
+        border-radius: 6px; */
+        line-height: 25px;
+        text-align: center;
+        height: 80px;
+        margin-top: 15px;
+        background-color: #fff;
+        font-size: 14px;
+        color: #BBB;
+        border-radius: 5px;
+    }
+    @media screen and (max-width: 1200px) {
+        #myScrollspy {
+            display: none;
+        }
+    }
+        </style>
+        <script src='js/iconfont.js'></script>
+        <script src="js/jquery.min.js"></script>
+        <script src="hjs/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="div0">
+            <div th:replace="nav-head :: head"></div>
+            <div class="container">
+            <div class="row row1">
+                <div class="col-lg-12" style="">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            [[${type}]]
+                        </div>
+                        <div class="panel-body">
+                            <!-- 消息 -->
+                            <div id="xiaoxi">
+                                <div class="xiaoxi" th:each="post : ${posts}">
+                                    <img th:src="${post.headUrl}" class="img-circle xiaoxi-img" style="width:20px">
+                                    <div class="xiaoxi-top"><span class="xiaoxi-name" th:text="${post.name}">撒大苏打的</span><span style="margin-left: 20px;">发布了帖子</span></div>
+                                    <div class="xiaoxi-body" th:text="${post.title}">adsaddasdsdad撒大苏打sdda</div>
+                                    <div class="xiaoxi-data" style="color: cornflowerblue" th:text="${#strings.replace(post.time, 'T', ' ')}">2020-02-15</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-bottom">
+                        <div class="">
+                            <span style="font-size: 14px;">关于我们 招贤纳士 广告服务 开发助手 400-660-XXXXX@qq.com 客服工作时间 8:30-22:00</span><br>
+                            <span style="font-size: 12px;">公安备案号1101050xxxxxx 京ICP备19xxxxxx号京网文〔2021〕1039-165号 经营性网站备案信息 北京互联网违法和不良信息举报中心</span><br>
+                            <span style="font-size: 12px;">网络110报警服务 中国互联网举报中心 家长监护 Chrome商店下载 ©1999-2021北京创新乐知网络技术有限公司 版权与免责声明 版权申诉</span><br>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div>
+        </div>
+    </body>
+
+</html>

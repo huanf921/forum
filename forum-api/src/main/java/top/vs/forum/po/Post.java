@@ -1,12 +1,13 @@
 package top.vs.forum.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -42,6 +43,11 @@ public class Post extends Model<Post> {
      * 论贴分类类型
      */
     private String type;
+
+    /**
+     * 论帖附件路径
+     */
+    private String attachmentUrl;
 
     /**
      * 回复数

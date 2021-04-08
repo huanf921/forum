@@ -2,6 +2,7 @@ package top.vs.forum.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import top.vs.forum.dto.PostRedisDTO;
 import top.vs.forum.dto.UserSimpleRedisDTO;
 import top.vs.forum.mapper.UserMapper;
 import top.vs.forum.po.User;
@@ -39,5 +40,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userSimpleRedisDTO.setWeekVisits(0);
         userSimpleRedisDTO.setFans(0);
         redisTemplate.opsForHash().put("user:simple:info", id, userSimpleRedisDTO);
+    }
+
+    @Override
+    public List<PostRedisDTO> getWeekHotPosts() {
+        return (List<PostRedisDTO>) redisTemplate.opsForValue().get("weekHotPosts");
     }
 }

@@ -157,14 +157,19 @@
             border-bottom: solid 1px #ddd;
         }
 
+        .luntan:hover {
+            cursor: pointer;
+        }
+
         .luntan-title {
-            font-size: 20px;
+            margin-top: 15px;
+            font-size: 18px;
         }
 
         .luntan-bottom {
             position: absolute;
             left: 0px;
-            bottom: 0px;
+            bottom: 2px;
             color: #666;
         }
 
@@ -257,7 +262,7 @@
             // 页面加载时获取用户简要信息
             let albumUrls = null
             $.ajax({
-                "url":"/user/get/user/brief/info/" + [[${session.loginUser.id}]],
+                "url":"/user/get/user/brief/info/" + [[${curQryUserId}]],
                 "type":"get",
                 // "data":{
                 //     "phoneNum":phoneNum
@@ -280,6 +285,36 @@
                         albumUrls = data.albumUrls
                     } else {
                         layer.msg("获取用户简要信息失败：" + responseData.message);
+                    }
+                },
+                "error":function(response){
+                    layer.msg(response.status + " " + response.statusText);
+                }
+            })
+
+            // 2、页面加载时请求获取默认的论坛tab中的信息
+            $.ajax({
+                "url":"user/get/user/post/brief/info/" + [[${curQryUserId}]],
+                "type":"get",
+                "dataType":"json",
+                "success":function (responseData){
+                    let code = responseData.code;
+                    if(code == "200") {
+                        let data = responseData.data;
+
+                        for (let i = 0; i < data.length; i++) {
+                            let briefPostInfo = data[i]
+                            let postDiv =
+                                "<div id='" + briefPostInfo.postId + "' class=\"luntan\">\n" +
+                                "    <div class=\"luntan-title\">" + briefPostInfo.title + "</div>\n" +
+                                "    <div class=\"luntan-bottom\">发表于<span style=\"color: cornflowerblue;margin-left: 5px;margin-right: 20px;\">" + briefPostInfo.time.replace(/T/, " ") + "</span>论帖类型<span\n" +
+                                "            style=\"color: cornflowerblue;margin-left: 5px;\">" + briefPostInfo.type + "</span></div>\n" +
+                                "</div>"
+                            $("#luntan").append(postDiv);
+                        }
+
+                    } else {
+                        layer.msg("获取用户论坛信息失败：" + responseData.message);
                     }
                 },
                 "error":function(response){
@@ -385,16 +420,7 @@
                         <div class="panel-body">
                             <!-- 论坛 -->
                             <div class="" id="luntan">
-                                <div class="luntan">
-                                    <div class="luntan-title">撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒</div>
-                                    <div class="luntan-bottom">发表于<span style="margin-left: 5px;margin-right: 20px;">2014-02-45</span>最后回复<span
-                                            style="margin-left: 5px;">2014-02-45</span></div>
-                                </div>
-                                <div class="luntan">
-                                    <div class="luntan-title">撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒</div>
-                                    <div class="luntan-bottom">发表于<span style="margin-left: 5px;margin-right: 20px;">2014-02-45</span>最后回复<span
-                                            style="margin-left: 5px;">2014-02-45</span></div>
-                                </div>
+
                             </div>
                             <!-- 收藏 -->
                             <div class="div-right" id="shoucang">

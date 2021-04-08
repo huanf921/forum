@@ -10,9 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import top.vs.forum.api.ForumUserFeignClient;
 import top.vs.forum.constant.ForumConstant;
+import top.vs.forum.dto.PostRedisDTO;
 import top.vs.forum.dto.ResultDTO;
 import top.vs.forum.dto.UserSimpleDTO;
 import top.vs.forum.po.User;
@@ -21,7 +25,6 @@ import top.vs.forum.vo.UserInfoVO;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.Random;
 
 /**
  * <p>
@@ -66,11 +69,13 @@ public class UserController {
             user.setPassword(SecureUtil.md5(user.getPassword()));
             userService.save(user);
             // 在缓存中初始化用户的粉丝数及其访问量
-            Integer userId = userService.getOne(wrapper).getId();
+            Integer userId = user.getId();
             userService.initRedisUserSimpleInfo(userId);
+            // 数据库初始化用户个人信息
+            forumUserFeignClient.saveUserDetailInfo(userId);
             // 在文件管理器中初始化用户的相册目录和资料文件目录
-            FileUtil.mkdir(postFilePath + userId);
-            FileUtil.mkdir(albumUploadPath + userId);
+            FileUtil.mkdir("file:" + postFilePath + userId);
+            FileUtil.mkdir("file:" + albumUploadPath + userId);
             map.addAttribute(ForumConstant.ATTR_NAME_MESSAGE, ForumConstant.MESSAGE_TO_LOGIN);
         } else {
             map.addAttribute(ForumConstant.ATTR_NAME_MESSAGE, ForumConstant.MESSAGE_LOGIN_ACCT_ALREADY_IN_USE);
@@ -143,7 +148,10 @@ public class UserController {
      */
     private void setPageHotData(ModelMap map) {
         // 查询热帖、周名人数据并封装
-        List<UserInfoVO> userInfoVOS = userService.getWeekHotUsers();
-        map.addAttribute("weekHotUsers", userInfoVOS);
+        List<UserInfoVO> weekHotUsers = userService.getWeekHotUsers();
+        map.addAttribute("weekHotUsers", weekHotUsers);
+
+        List<PostRedisDTO> weekHotPosts = userService.getWeekHotPosts();
+        map.addAttribute("weekHotPosts", weekHotPosts);
     }
 }

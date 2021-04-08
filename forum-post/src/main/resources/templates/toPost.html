@@ -1,246 +1,341 @@
 <!DOCTYPE html>
-<html  xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="utf-8">
-        <title>post</title>
-        <base th:href="@{/}"/>
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <!-- 富文本css -->
-        <link href="css/index.css" rel="stylesheet">
-        <link href="css/prettify.css" rel="stylesheet">
-        <link href="css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
-<!--        <link href="css/bootstrap-responsive.min.css" rel="stylesheet">-->
-        <link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>发布论帖</title>
+    <base th:href="@{/}"/>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- 富文本css -->
+    <link href="css/index.css" rel="stylesheet">
+    <link href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+    <!-- <link href="bootstrap-combined.no-icons.min.css" rel="stylesheet"> -->
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="css/font-awesome.css" rel="stylesheet">
 
-<style>
-    .div0{
-        min-width:970px;
-        background-color: rgb(250, 250, 250);
-        /*background: url(beijing.jpg);*/
-        min-height: 1000px;
-    }
-
-    /* ======================= */
-    /* ===阿里图库的图片样式 === */
-    /* ======================= */
-    .icon,.icon-a{
-        width: 1em;
-        height: 1em;
-        vertical-align: -0.15em;
-        fill: currentColor;
-        overflow: hidden;
-    }
-    .row1{
-        margin-top: 64px;
-    }
-    .post-button{
-        text-align: center;
-        position: absolute;
-        background-color: rgb(46, 202, 250);
-        /*font-weight: 500px;*/
-        color: rgb(255, 255, 255);
-        font-size: 16px;
-        font-weight: bold;
-        border-radius: 7px;
-        padding: 5px;
-        width: 200px;
-        bottom: -55px;
-        left: calc(50% - 100px);
-        cursor: pointer;
-    }
-    .post-button:hover{
-        background-color: rgb(46, 168, 206);
-    }
-    .right-bottom{
-        /* border:solid 1px rgb(170, 170, 170);
-        border-radius: 6px; */
-        line-height: 25px;
-        text-align: center;
-        height: 80px;
-        margin-top: 15px;
-        background-color: #fff;
-        font-size: 14px;
-        color: #BBB;
-        border-radius: 5px;
-    }
-    @media screen and (max-width: 1200px) {
-        #myScrollspy {
-            display: none;
+    <style>
+        .div0 {
+            min-width: 970px;
+            background-color: #f5f6f7;
+            /*background-color: rgb(250, 250, 250);*/
+            /*background: url(img/beijing.jpg);*/
+            min-height: 1000px;
         }
-    }
-        </style>
-    </head>
-    <body>
-        <div class="div0">
-                <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style=" min-width:970px;">
-                    <div class="container-fluid">
-                    <div class="navbar-header">
-                        <a class="navbar-brand" href="#">
-                            <svg class="icon-a" aria-hidden="true" >
-                                <!-- 阿里图库logo -->
-                                <use  xlink:href="#icon-gouwuche"></use>
-                            </svg>       
-                        XX博客
-                        </a>
-                    </div>
-                    <div class="collapse navbar-collapse">
-                        <ul class="nav navbar-nav navbar-left">
-                            <li class="active"><a href="#">首页</a></li>
-                            <li ><a href="#">下载</a></li>
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-        
-                            <form class="navbar-form navbar-left" role="search" style="margin-right:10px">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="Vue" style="width:300px ">
-                                </div>
-                                <button type="submit" class="btn btn-default">提交</button>
-                            </form>                    
-                            <li><a href="#">我的</a></li>
-<!--                            <li><a href="#">收藏</a></li>-->
-<!--                            <li><a href="#">动态</a></li>-->
-<!--                            <li><a href="#">消息</a></li>-->
-                        </ul>
-                    </div>
-                    </div>
-                </nav>
-            <div class="container">
-            <div class="row row1">
-                <div class="col-lg-12" style="">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                发表博客
-                            </h3>
-                        </div>
-                        <div class="panel-body" style="margin-bottom: 80px;position: relative;">
-                            <div class="form-group">
-                                <label class="control-label" style="font-weight: bold;">
-                                    博客标题:
-                                </label>
-                                <div class="">
-                                    <input class="form-control" id="name" type="text" placeholder="请输入博客标题" style="height: 36px;">
-                                </div>
-                            </div>
-                              </form>
-                            <div style="font-weight: bold;">请回复</div>    
-                                <!--这里加上是为了让提示信息显示 不然会被遮挡-->
-                                <div class="btn-toolbar" data-role="editor-toolbar" data-target="#editor">
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" title="Font"><i class="icon-font"></i><b class="caret"></b></a>
-                                        <ul class="dropdown-menu"> </ul>
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" title="Font Size"><i class="icon-text-height"></i> <b class="caret"></b></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a data-edit="fontSize 5"><font size="5">Huge</font></a></li>
-                                            <li><a data-edit="fontSize 3"><font size="3">Normal</font></a></li>
-                                            <li><a data-edit="fontSize 1"><font size="1">Small</font></a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn" data-edit="bold" title="Bold (Ctrl/Cmd+B)"><i class="icon-bold"></i></a> <!--加粗-->
-                                        <a class="btn" data-edit="italic" title="Italic (Ctrl/Cmd+I)"><i class="icon-italic"></i></a><!-- 斜体-->
-                                        <a class="btn" data-edit="strikethrough" title="Strikethrough"><i class="icon-strikethrough"></i></a><!-- 删除线-->
-                                        <a class="btn" data-edit="underline" title="Underline (Ctrl/Cmd+U)"><i class="icon-underline"></i></a><!-- 下划线-->
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn" data-edit="insertunorderedlist" title="Bullet list"><i class="icon-list-ul"></i></a><!-- 加点-->
-                                        <a class="btn" data-edit="insertorderedlist" title="Number list"><i class="icon-list-ol"></i></a><!-- 数字排序-->
-                                        <a class="btn" data-edit="outdent" title="Reduce indent (Shift+Tab)"><i class="icon-indent-left"></i></a><!-- 减少缩进-->
-                                        <a class="btn" data-edit="indent" title="Indent (Tab)"><i class="icon-indent-right"></i></a><!--增加缩进-->
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn" data-edit="justifyleft" title="Align Left (Ctrl/Cmd+L)"><i class="icon-align-left"></i></a><!--左对齐-->
-                                        <a class="btn" data-edit="justifycenter" title="Center (Ctrl/Cmd+E)"><i class="icon-align-center"></i></a><!--居中-->
-                                        <a class="btn" data-edit="justifyright" title="Align Right (Ctrl/Cmd+R)"><i class="icon-align-right"></i></a><!--右对齐-->
-                                        <a class="btn" data-edit="justifyfull" title="Justify (Ctrl/Cmd+J)"><i class="icon-align-justify"></i></a><!--垂直对齐-->
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn dropdown-toggle" data-toggle="dropdown" title="Hyperlink"><i class="icon-link"></i></a><!-- 链接-->
-                                        <div class="dropdown-menu input-append">
-                                            <input class="span2" placeholder="URL" type="text" data-edit="createLink"/>
-                                            <button class="btn" type="button">Add</button>
-                                        </div>
-                                        <a class="btn" data-edit="unlink" title="Remove Hyperlink"><i class="icon-cut"></i></a>
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn" title="Insert picture (or just drag & drop)" id="pictureBtn" ><i class="icon-picture"></i></a>
-                                    </div>
-                                    <div class="btn-group">
-                                        <a class="btn" data-edit="undo" title="Undo (Ctrl/Cmd+Z)"><i class="icon-undo"></i></a><!--撤销-->
-                                        <a class="btn" data-edit="redo" title="Redo (Ctrl/Cmd+Y)"><i class="icon-repeat"></i></a><!--恢复-->
-                                    </div>
-                                    <input type="text" data-edit="inserttext" id="voiceBtn" x-webkit-speech="">
-                                </div>
-                                
-                                <div id="editor">
-                                    Go ahead…
-                                </div>
-                                <div class="post-button">
-                                    发表
-                                </div>
-                        </div >
-                    </div>
-                <div class="right-bottom">
-                        <div class="">
-                            <span style="font-size: 14px;">关于我们 招贤纳士 广告服务 开发助手 400-660-XXXXX@qq.com 客服工作时间 8:30-22:00</span><br>
-                            <span style="font-size: 12px;">公安备案号1101050xxxxxx 京ICP备19xxxxxx号京网文〔2021〕1039-165号 经营性网站备案信息 北京互联网违法和不良信息举报中心</span><br>
-                            <span style="font-size: 12px;">网络110报警服务 中国互联网举报中心 家长监护 Chrome商店下载 ©1999-2021北京创新乐知网络技术有限公司 版权与免责声明 版权申诉</span><br>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    </body>
+
+        /* ======================= */
+        /* ===阿里图库的图片样式 === */
+        /* ======================= */
+        .icon, .icon-a {
+            width: 1em;
+            height: 1em;
+            vertical-align: -0.15em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+
+        .row1 {
+            margin-top: 64px;
+        }
+
+        .post-button {
+            text-align: center;
+            position: absolute;
+            background-color: rgb(46, 202, 250);
+            font-weight: 500;
+            color: rgb(255, 255, 255);
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 7px;
+            padding: 5px;
+            width: 200px;
+            bottom: -97px;
+            left: calc(50% - 100px);
+            cursor: pointer;
+        }
+
+        .post-button:hover {
+            background-color: rgb(46, 168, 206);
+        }
+
+        .post-select {
+            position: absolute;
+            width: 250px;
+        }
+
+        .post-inputfile {
+            position: absolute;
+            bottom: -60px;
+        }
+
+        .right-bottom {
+            /* border:solid 1px rgb(170, 170, 170);
+            border-radius: 6px; */
+            line-height: 25px;
+            text-align: center;
+            height: 80px;
+            margin-top: 15px;
+            background-color: #fff;
+            font-size: 14px;
+            color: #BBB;
+            border-radius: 5px;
+        }
+
+        @media screen and (max-width: 1200px) {
+            #myScrollspy {
+                display: none;
+            }
+        }
+    </style>
+
     <script src='js/iconfont.js'></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    
+
     <script src="js/jquery.hotkeys.js"></script>
     <script src="js/bootstrap-wysiwyg.js"></script>
+    <script src="layer/layer.js"></script>
 
+    <script th:inline="javascript">
 
-    <script>
-        $(function(){
+        $(function () {
+
+            $("#go").on("click",function () {
+                // console.log('asdasd', $("#editor").html(), 'asdas', $("#control").val())
+                let userId = [[${session.loginUser.id}]]
+                let formData = new FormData()
+                formData.append("userId", userId)
+                formData.append("postFile", $("#postFile")[0].files[0])
+                formData.append("title", $("#title").val())
+                formData.append("content", $("#editor").html())
+                formData.append("type", $("#control").val())
+                $.ajax({
+                    "url":"/post/save/user/to/post/info",
+                    "type":"post",
+                    "data":formData,
+                    "dataType":"json",
+                    "processData": false,  // 告诉jQuery不要去处理发送的数据
+                    "contentType": false,   // 告诉jQuery不要去设置Content-Type请求头
+                    "success":function(responseData){
+                        let code = responseData.code;
+                        if(code == "200") {
+                            layer.open({
+                                title: '提示',
+                                content: '发布论帖成功'
+                                ,btn: ['确定']
+                                ,btn1: function(index, layero){
+                                    layer.close(index)
+                                    // 导向空间页面
+                                    window.location.href = "/user/zone/page/" + userId
+                                }
+                            })
+                        } else {
+                            layer.open({
+                                title: '提示',
+                                content: '发布论帖失败，服务器繁忙'
+                                ,btn: ['确定']
+                                ,btn1: function(index, layero){
+                                    layer.close(index)
+                                }
+                            })
+                            console.log("发布论帖失败，错误信息：" + responseData.message)
+                        }
+
+                    },
+                    "error":function(response){
+                        layer.msg("发布论帖失败：" + res.status)
+                        console.log("发布论帖失败，错误信息：" + res.statusText)
+                    }
+                });
+            });
+            $('input[id=postFile]').on("change", function() {
+                let that = $(this)
+                // console.log(that.val())
+                $('#photoCover').val(that.val())
+            })
+
             function initToolbarBootstrapBindings() {
                 var fonts = ['Serif', 'Sans', 'Arial', 'Arial Black', 'Courier',
-                            'Courier New', 'Comic Sans MS', 'Helvetica', 'Impact', 'Lucida Grande', 'Lucida Sans', 'Tahoma', 'Times',
-                            'Times New Roman', 'Verdana'],
-                        fontTarget = $('[title=Font]').siblings('.dropdown-menu');
+                        'Courier New', 'Comic Sans MS', 'Helvetica', 'Impact', 'Lucida Grande', 'Lucida Sans', 'Tahoma', 'Times',
+                        'Times New Roman', 'Verdana'],
+                    fontTarget = $('[title=Font]').siblings('.dropdown-menu');
                 $.each(fonts, function (idx, fontName) {
-                    fontTarget.append($('<li><a data-edit="fontName ' + fontName +'" style="font-family:\''+ fontName +'\'">'+fontName + '</a></li>'));
+                    fontTarget.append($('<li><a data-edit="fontName ' + fontName + '" style="font-family:\'' + fontName + '\'">' + fontName + '</a></li>'));
                 });
-                $('a[title]').tooltip({container:'body'});
-                $('.dropdown-menu input').click(function() {return false;})
-                        .change(function () {$(this).parent('.dropdown-menu').siblings('.dropdown-toggle').dropdown('toggle');})
-                        .keydown('esc', function () {this.value='';$(this).change();});
-     
+                $('a[title]').tooltip({container: 'body'});
+                $('.dropdown-menu input').click(function () {
+                    return false;
+                })
+                    .change(function () {
+                        $(this).parent('.dropdown-menu').siblings('.dropdown-toggle').dropdown('toggle');
+                    })
+                    .keydown('esc', function () {
+                        this.value = '';
+                        $(this).change();
+                    });
+
                 $('[data-role=magic-overlay]').each(function () {
                     var overlay = $(this), target = $(overlay.data('target'));
                     overlay.css('opacity', 0).css('position', 'absolute').offset(target.offset()).width(target.outerWidth()).height(target.outerHeight());
                 });
                 $('#voiceBtn').hide();
-                 if ("onwebkitspeechchange"  in document.createElement("input")) {
-                   var editorOffset = $('#editor').offset();
-                   $('#voiceBtn').css('position','absolute').offset({top: editorOffset.top, left: editorOffset.left+$('#editor').innerWidth()-35});
-                 } else {
-                   $('#voiceBtn').hide();
-                 }
+                if ("onwebkitspeechchange" in document.createElement("input")) {
+                    var editorOffset = $('#editor').offset();
+                    $('#voiceBtn').css('position', 'absolute').offset({
+                        top: editorOffset.top,
+                        left: editorOffset.left + $('#editor').innerWidth() - 35
+                    });
+                } else {
+                    $('#voiceBtn').hide();
+                }
             };
-            function showErrorAlert (reason, detail) {
-                var msg='';
-                if (reason==='unsupported-file-type') {
-                    msg = "Unsupported format " +detail;
+
+            function showErrorAlert(reason, detail) {
+                var msg = '';
+                if (reason === 'unsupported-file-type') {
+                    msg = "Unsupported format " + detail;
                 } else {
                     console.log("error uploading file", reason, detail);
                 }
-                $('<div class="alert"> <button type="button" class="close" data-dismiss="alert">×</button>'+
-                        '<strong>File upload error</strong> '+msg+' </div>').prependTo('#alerts');
+                $('<div class="alert"> <button type="button" class="close" data-dismiss="alert">×</button>' +
+                    '<strong>File upload error</strong> ' + msg + ' </div>').prependTo('#alerts');
             };
             initToolbarBootstrapBindings();
-            $('#editor').wysiwyg({ fileUploadError: showErrorAlert} );
+            $('#editor').wysiwyg({fileUploadError: showErrorAlert});
+
+
         });
+
     </script>
+</head>
+<body>
+<div class="div0">
+    <div th:replace="nav-head :: head"></div>
+    <div class="container">
+        <div class="row row1">
+            <div class="col-lg-12" style="">
+                <div class="panel panel-default" style="height: 620px">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            发布论帖
+                        </h3>
+                    </div>
+                    <div class="panel-body" style="margin-bottom: 80px;position: relative;">
+                        <div class="form-group">
+                            <label class="control-label" style="font-weight: bold;">
+                                论帖标题
+                            </label>
+                            <div class="">
+                                <input class="form-control" id="title" type="text" placeholder="请输入论帖标题"
+                                       style="height: 36px;">
+                            </div>
+                        </div>
+                        <div style="font-weight: bold;">请输入内容</div>
+                        <!--这里加上是为了让提示信息显示 不然会被遮挡-->
+                        <div class="btn-toolbar" data-role="editor-toolbar" data-target="#editor">
+                            <div class="btn-group">
+                                <a class="btn dropdown-toggle" data-toggle="dropdown" title="Font"><i
+                                        class="icon-font"></i><b class="caret"></b></a>
+                                <ul class="dropdown-menu"></ul>
+                            </div>
+                            <div class="btn-group">
+                                <a class="btn dropdown-toggle" data-toggle="dropdown" title="Font Size"><i
+                                        class="icon-text-height"></i> <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    <li><a data-edit="fontSize 5"><font size="5">Huge</font></a></li>
+                                    <li><a data-edit="fontSize 3"><font size="3">Normal</font></a></li>
+                                    <li><a data-edit="fontSize 1"><font size="1">Small</font></a></li>
+                                </ul>
+                            </div>
+                            <div class="btn-group">
+                                <a class="btn" data-edit="bold" title="Bold (Ctrl/Cmd+B)"><i class="icon-bold"></i></a>
+                                <!--加粗-->
+                                <a class="btn" data-edit="italic" title="Italic (Ctrl/Cmd+I)"><i
+                                        class="icon-italic"></i></a><!-- 斜体-->
+                                <a class="btn" data-edit="strikethrough" title="Strikethrough"><i
+                                        class="icon-strikethrough"></i></a><!-- 删除线-->
+                                <a class="btn" data-edit="underline" title="Underline (Ctrl/Cmd+U)"><i
+                                        class="icon-underline"></i></a><!-- 下划线-->
+                            </div>
+                            <div class="btn-group">
+                                <a class="btn" data-edit="insertunorderedlist" title="Bullet list"><i
+                                        class="icon-list-ul"></i></a><!-- 加点-->
+                                <a class="btn" data-edit="insertorderedlist" title="Number list"><i
+                                        class="icon-list-ol"></i></a><!-- 数字排序-->
+                                <a class="btn" data-edit="outdent" title="Reduce indent (Shift+Tab)"><i
+                                        class="icon-indent-left"></i></a><!-- 减少缩进-->
+                                <a class="btn" data-edit="indent" title="Indent (Tab)"><i class="icon-indent-right"></i></a>
+                                <!--增加缩进-->
+                            </div>
+                            <div class="btn-group">
+                                <a class="btn" data-edit="justifyleft" title="Align Left (Ctrl/Cmd+L)"><i
+                                        class="icon-align-left"></i></a><!--左对齐-->
+                                <a class="btn" data-edit="justifycenter" title="Center (Ctrl/Cmd+E)"><i
+                                        class="icon-align-center"></i></a><!--居中-->
+                                <a class="btn" data-edit="justifyright" title="Align Right (Ctrl/Cmd+R)"><i
+                                        class="icon-align-right"></i></a><!--右对齐-->
+                                <a class="btn" data-edit="justifyfull" title="Justify (Ctrl/Cmd+J)"><i
+                                        class="icon-align-justify"></i></a><!--垂直对齐-->
+                            </div>
+                            <div class="btn-group">
+                                <a class="btn dropdown-toggle" data-toggle="dropdown" title="Hyperlink"><i
+                                        class="icon-link"></i></a><!-- 链接-->
+                                <div class="dropdown-menu input-append">
+                                    <input class="span2" placeholder="URL" type="text" data-edit="createLink"/>
+                                    <button class="btn" type="button">Add</button>
+                                </div>
+                                <a class="btn" data-edit="unlink" title="Remove Hyperlink"><i class="icon-cut"></i></a>
+                            </div>
+                            <div class="btn-group">
+                                <a class="btn" title="Insert picture (or just drag & drop)" id="pictureBtn"><i
+                                        class="icon-picture"></i></a>
+                            </div>
+                            <div class="btn-group">
+                                <a class="btn" data-edit="undo" title="Undo (Ctrl/Cmd+Z)"><i class="icon-undo"></i></a>
+                                <!--撤销-->
+                                <a class="btn" data-edit="redo" title="Redo (Ctrl/Cmd+Y)"><i
+                                        class="icon-repeat"></i></a><!--恢复-->
+                            </div>
+                            <input type="text" data-edit="inserttext" id="voiceBtn" x-webkit-speech="">
+                        </div>
+
+                        <div id="editor">
+                            Go ahead…
+                        </div>
+
+                        <div class="form-group" style="margin-top: 8px">
+                            <label>分类板块</label>
+                            <select class="form-control post-select" id="control">
+                                <option>技术交流</option>
+                                <option>校闻趣事</option>
+                                <option>社团活动</option>
+                                <option>校园一角</option>
+                                <option>美食佳肴</option>
+                                <option>政史评谈</option>
+                            </select>
+                        </div>
+                        <div class="form-group post-inputfile has-feedback" id="file">
+                            <div class="input-group">
+                                <input type="file" id="postFile" name="postFile" style="display: none"/>
+                                <span class="input-group-addon" onclick="$('input[id=postFile]').click();" style="cursor: pointer; background-color: #e7e7e7"><i class="glyphicon glyphicon-folder-open"></i> 上传附件</span>
+                                <input id="photoCover" class="form-control" type="text" style="width: 420px">
+                            </div>
+                        </div>
+                        <div class="post-button" id="go">
+                            发布
+                        </div>
+
+                    </div>
+                </div>
+                <div class="right-bottom">
+                    <div class="">
+                        <span style="font-size: 14px;">关于我们 招贤纳士 广告服务 开发助手 400-660-XXXXX@qq.com 客服工作时间 8:30-22:00</span><br>
+                        <span style="font-size: 12px;">公安备案号1101050xxxxxx 京ICP备19xxxxxx号京网文〔2021〕1039-165号 经营性网站备案信息 北京互联网违法和不良信息举报中心</span><br>
+                        <span style="font-size: 12px;">网络110报警服务 中国互联网举报中心 家长监护 Chrome商店下载 ©1999-2021北京创新乐知网络技术有限公司 版权与免责声明 版权申诉</span><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
 </html>

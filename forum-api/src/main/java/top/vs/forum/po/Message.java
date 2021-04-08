@@ -34,7 +34,7 @@ public class Message extends Model<Message> {
     private Integer userId;
 
     /**
-     * 消息类型
+     * 消息类型（1：被关注 2：关注者发帖 3：被回复帖子 4：被回复评论 5：被回复评论回复）
      */
     private Integer type;
 
@@ -71,7 +71,7 @@ public class Message extends Model<Message> {
     /**
      * 被关注者id
      */
-    private Integer toSubscribeId;
+    // private Integer toSubscribeId;
 
     /**
      * 消息时间

@@ -1,5 +1,6 @@
 package top.vs.forum.task;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -8,17 +9,20 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import top.vs.forum.api.ForumIdentFeignClient;
 import top.vs.forum.dto.ResultDTO;
+import top.vs.forum.dto.UserSimpleRedisDTO;
 import top.vs.forum.po.User;
+import top.vs.forum.po.UserDetail;
 import top.vs.forum.service.UserDetailService;
 import top.vs.forum.vo.UserInfoVO;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class PortalInfoTask {
+public class PortalUserInfoTask {
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -37,6 +41,18 @@ public class PortalInfoTask {
         // log.info("测试增加第三名用户的人气 -- 定时执行");
         // redisTemplate.opsForZSet().incrementScore("user:week:rank", 1327685513, 1);
 
+        // 取出缓存中用户简要信息
+        Map<Integer, UserSimpleRedisDTO> userSimpleRedisDTOMap =
+                redisTemplate.opsForHash().entries("user:simple:info");
+        userSimpleRedisDTOMap.forEach((userId, userSimpleRedisDTO) -> {
+            // 根据用户id进行三个字段的更新
+            UserDetail updUserDetail = new UserDetail();
+            updUserDetail.setFans(userSimpleRedisDTO.getFans());
+            updUserDetail.setWeekVisits(userSimpleRedisDTO.getWeekVisits());
+            updUserDetail.setAllVisits(userSimpleRedisDTO.getAllVisits());
+            userDetailService.update(updUserDetail,
+                    new LambdaQueryWrapper<UserDetail>().eq(UserDetail::getUserId, userId));
+        });
     }
 
     /**
@@ -81,11 +97,22 @@ public class PortalInfoTask {
     }
 
     /**
-     * 每隔12小时更新周热帖信息（根据回复数排名前十）
+     * 每周将周访问量清零
      */
-    @Scheduled(initialDelay = 1000, fixedDelay = 12 * 60 * 60 * 1000)
-    public void updWeekPostInfo2RedisFromDb() {
-        // log.info("更新周热帖信息 -- 任务定时执行");
-        // 热帖相关信息
+    @Scheduled(cron = "0 0 0 ? * MON")
+    public void clearUserWeekVisitsAtRedis() {
+        Map<Integer, UserSimpleRedisDTO> userSimpleRedisDTOMap =
+                redisTemplate.opsForHash().entries("user:simple:info");
+        userSimpleRedisDTOMap.forEach((userId, userSimpleRedisDTO) -> {
+            userSimpleRedisDTO.setWeekVisits(0);
+        });
+        redisTemplate.opsForHash().putAll("user:simple:info", userSimpleRedisDTOMap);
+
+        Set<ZSetOperations.TypedTuple<Object>> tuples =
+                redisTemplate.opsForZSet().rangeWithScores("user:week:rank", 0, -1);
+        tuples.forEach(tuple -> {
+            Integer userId = (Integer) tuple.getValue();
+            redisTemplate.opsForZSet().add("user:week:rank", userId, 0);
+        });
     }
 }

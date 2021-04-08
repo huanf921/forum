@@ -13,4 +13,5 @@ public class ForumConstant {
     public static final String ATTR_NAME_MESSAGE = "message";
 
     public static final String ATTR_NAME_SESSION_MESSAGE = "smsg";
+    public static final String ATTR_NAME_CUR_QRY_USER_ID = "curQryUserId";
 }

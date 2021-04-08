@@ -264,6 +264,9 @@
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript">
         $(function (){
+            $("#toPost").click(function () {
+                window.location.href = "/post/to/post"
+            })
             $("#loginDiv").click(function (){
                 window.location.href = "/ident/login/page"
             })
@@ -323,10 +326,10 @@
                                     <img src="https://static.runoob.com/images/mix/img_avatar.png" class="media-object"
                                          style="width:90px">
                                 </th:block>
-<!--                                <th:block th:if="${weekHotUser.headUrl != null}">-->
-<!--                                    <img th:src="${weekHotUser.headUrl}" class="media-object"-->
-<!--                                         style="width:90px">-->
-<!--                                </th:block>-->
+                                <th:block th:if="${weekHotUser.headUrl != null}">
+                                    <img th:src="${weekHotUser.headUrl}" class="media-object"
+                                         style="width:90px">
+                                </th:block>
                             </div>
                             <div class="media-body">
                                 <h4 class="media-heading" th:text="${weekHotUser.name}">帖主</h4>
@@ -347,32 +350,20 @@
                     <div class="">
                         <table class="table table-hover">
                             <thead>
-                            <tr>
-                                <th class="div2-left-bottom-td">标题</th>
-                                <th>类型</th>
-                                <th>提问人</th>
-                                <th>回复数</th>
-                            </tr>
+                                <tr>
+                                    <th class="div2-left-bottom-td">标题</th>
+                                    <th>类型</th>
+                                    <th>提问人</th>
+                                    <th>回复数</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr class="div2-left-bottom-tr">
-                                <td>Tanmay</td>
-                                <td>Bangalore</td>
-                                <td>560001</td>
-                                <td>560001</td>
-                            </tr>
-                            <tr class="div2-left-bottom-tr">
-                                <td>Sachin</td>
-                                <td>Mumbai</td>
-                                <td>400003</td>
-                                <td>560001</td>
-                            </tr>
-                            <tr class="div2-left-bottom-tr">
-                                <td>Uma</td>
-                                <td>Pune</td>
-                                <td>411027</td>
-                                <td>560001</td>
-                            </tr>
+                                <tr th:each="weekHotPost : ${weekHotPosts}" class="div2-left-bottom-tr">
+                                    <td th:text="${weekHotPost.title}">Tanmay</td>
+                                    <td style="color: cornflowerblue" th:text="${weekHotPost.type}">Bangalore</td>
+                                    <td th:text="${weekHotPost.name}">560001</td>
+                                    <td th:text="${weekHotPost.replies}">560001</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -430,7 +421,7 @@
 
                         </div>
                     </div>
-                    <div class="div-right-top-bottom">
+                    <div class="div-right-top-bottom" id="toPost">
                         发帖
                     </div>
                 </div>

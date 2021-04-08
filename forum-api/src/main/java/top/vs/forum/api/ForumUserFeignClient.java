@@ -35,4 +35,19 @@ public interface ForumUserFeignClient {
     @GetMapping("/get/user/detail/info/{userId}")
     ResultDTO<UserDetailInfoDTO> getUserDetailInfo(@PathVariable("userId") Integer userId);
 
+    /**
+     * 初始化用户详情信息
+     * @param userId
+     * @return
+     */
+    @GetMapping("/save/user/detail/info/{userId}")
+    ResultDTO saveUserDetailInfo(@PathVariable("userId") Integer userId);
+
+    /**
+     * 根据id获取头像
+     * @param userId
+     * @return
+     */
+    @GetMapping("/get/user/head/url/{userId}")
+    ResultDTO<String> getUserHeadUrl(@PathVariable("userId") Integer userId);
 }

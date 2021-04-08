@@ -147,6 +147,19 @@ public class UserDetailServiceImpl extends ServiceImpl<UserDetailMapper, UserDet
 
     }
 
+    @Override
+    public void updRedisUserVisits(Integer userId) {
+        UserSimpleRedisDTO userSimpleRedisDTO = (UserSimpleRedisDTO) redisTemplate.opsForHash().get("user:simple:info", userId);
+        // 由于是反序列化出来的一个新对象，所以改变值之后还需要设置回去
+        userSimpleRedisDTO.setWeekVisits(userSimpleRedisDTO.getWeekVisits() + 1);
+        userSimpleRedisDTO.setAllVisits(userSimpleRedisDTO.getAllVisits() + 1);
+        redisTemplate.opsForHash().put("user:simple:info", userId, userSimpleRedisDTO);
+
+        // 对排行榜中的访问量值也进行维护
+        redisTemplate.opsForZSet().incrementScore("user:week:rank", userId, 1);
+        redisTemplate.opsForZSet().incrementScore("user:all:rank", userId, 1);
+    }
+
     /**
      * 获取用户信息
      * @param userId

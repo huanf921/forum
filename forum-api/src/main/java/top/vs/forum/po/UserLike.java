@@ -33,7 +33,7 @@ public class UserLike extends Model<UserLike> {
     private Integer userId;
 
     /**
-     * 点赞类型
+     * 点赞类型（1：帖子被赞 2：评论被赞 3：评论回复被赞）
      */
     private Integer type;
 

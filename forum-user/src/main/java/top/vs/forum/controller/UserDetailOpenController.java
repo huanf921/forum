@@ -2,16 +2,12 @@ package top.vs.forum.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import top.vs.forum.dto.ResultDTO;
-import top.vs.forum.dto.UserBriefInfoDTO;
-import top.vs.forum.dto.UserDetailInfoDTO;
 import top.vs.forum.dto.UserSimpleDTO;
 import top.vs.forum.service.UserDetailService;
-import top.vs.forum.vo.UserInfoVO;
 
 /**
  * <p>
@@ -30,6 +26,7 @@ public class UserDetailOpenController {
 
     /**
      * 查询用户 粉丝数、访问量、排名等相关内容
+     *
      * @param userId
      * @return
      */
@@ -41,6 +38,16 @@ public class UserDetailOpenController {
             String headUrl = userDetailService.getUserHeadUrlById(userId);
             userSimpleDTO.setHeadUrl(headUrl);
             return ResultDTO.ok(userSimpleDTO);
+        } catch (Exception e) {
+            return ResultDTO.error("500", e.getMessage());
+        }
+    }
+
+    @GetMapping("/get/user/head/url/{userId}")
+    public ResultDTO<String> getUserHeadUrl(@PathVariable("userId") Integer userId) {
+        try {
+            String headUrl = userDetailService.getUserHeadUrlById(userId);
+            return ResultDTO.ok(headUrl);
         } catch (Exception e) {
             return ResultDTO.error("500", e.getMessage());
         }

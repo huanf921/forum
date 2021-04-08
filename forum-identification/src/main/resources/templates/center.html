@@ -237,6 +237,14 @@
                 display: none;
             }
         }
+
+        .post-title{
+            font-weight: bold;
+        }
+
+        .post-title:hover {
+            color: #FD482C;
+        }
     </style>
     <script src='js/iconfont.js'></script>
     <script src="js/jquery.min.js"></script>
@@ -245,6 +253,9 @@
     <script th:inline="javascript">
         // console.log([[${session.loginUser}]])
         $(function (){
+            $("#toPost").click(function () {
+                window.location.href = "/post/to/post"
+            })
             $(".logout").click(function (){
                 window.location.href = "/ident/logout"
             })
@@ -279,6 +290,11 @@
                     layer.msg(response.status + " " + response.statusText);
                 }
             });
+
+            $(".post-title").click(function (){
+                // console.log(this)
+                window.location.href = "/post/show/post/page/" + this.id
+            })
         })
     </script>
 </head>
@@ -290,7 +306,7 @@
             <div class="col-lg-9 col-md-12" style="width:850px">
                 <div class="div-left-top">
                     <div class="div-left-top1">
-                        <h4 class="pull-left" style="font-weight:bold;margin-top: 11px;">&nbsp;&nbsp;周飙升榜</h4>
+                        <h4 class="pull-left" style="font-weight:400;margin-top: 11px;">&nbsp;&nbsp;周飙升榜</h4>
                         <h5 class="pull-right" style="margin-top: 14px;margin-right: 20px;color:#888;cursor: pointer;">
                             更多</h5>
                     </div>
@@ -301,10 +317,10 @@
                                     <img src="https://static.runoob.com/images/mix/img_avatar.png" class="media-object"
                                          style="width:90px">
                                 </th:block>
-                                <!--                                <th:block th:if="${weekHotUser.headUrl != null}">-->
-                                <!--                                    <img th:src="${weekHotUser.headUrl}" class="media-object"-->
-                                <!--                                         style="width:90px">-->
-                                <!--                                </th:block>-->
+                                <th:block th:if="${weekHotUser.headUrl != null}">
+                                    <img th:src="${weekHotUser.headUrl}" class="media-object"
+                                         style="width:90px">
+                                </th:block>
                             </div>
                             <div class="media-body">
                                 <h4 class="media-heading" th:text="${weekHotUser.name}">帖主</h4>
@@ -318,7 +334,7 @@
                 </div>
                 <div class="div2-left-top">
                     <div class="div2-left-top1">
-                        <h4 class="pull-left" style="font-weight:bold;margin-top: 11px;">&nbsp;&nbsp;热帖</h4>
+                        <h4 class="pull-left" style="font-weight:400;margin-top: 11px;">&nbsp;&nbsp;热帖</h4>
                         <h5 class="pull-right" style="margin-top: 14px;margin-right: 20px;color:#888;cursor: pointer;">
                             更多</h5>
                     </div>
@@ -326,31 +342,19 @@
                         <table class="table table-hover">
                             <thead>
                             <tr>
-                                <th class="div2-left-bottom-td">标题</th>
-                                <th>类型</th>
-                                <th>提问人</th>
-                                <th>回复数</th>
+                                <th style="font-weight: lighter;color: #9d9d9d" class="div2-left-bottom-td">标题</th>
+                                <th style="font-weight: lighter;color: #9d9d9d">类型</th>
+                                <th style="font-weight: lighter;color: #9d9d9d">提问人</th>
+                                <th style="font-weight: lighter;color: #9d9d9d">回复数</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr class="div2-left-bottom-tr">
-                                <td>Tanmay</td>
-                                <td>Bangalore</td>
-                                <td>560001</td>
-                                <td>560001</td>
-                            </tr>
-                            <tr class="div2-left-bottom-tr">
-                                <td>Sachin</td>
-                                <td>Mumbai</td>
-                                <td>400003</td>
-                                <td>560001</td>
-                            </tr>
-                            <tr class="div2-left-bottom-tr">
-                                <td>Uma</td>
-                                <td>Pune</td>
-                                <td>411027</td>
-                                <td>560001</td>
-                            </tr>
+                                <tr th:each="weekHotPost : ${weekHotPosts}">
+                                    <td class="post-title div2-left-bottom-tr" th:id="${weekHotPost.postId}" th:text="${weekHotPost.title}">Tanmay</td>
+                                    <td style="color: cornflowerblue" th:text="${weekHotPost.type}">Bangalore</td>
+                                    <td th:text="${weekHotPost.name}">560001</td>
+                                    <td th:text="${weekHotPost.replies}">560001</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -372,33 +376,33 @@
                     <div class="div-right-top-center">
                         <div class="">
                             <a class="list-group-item active">论贴分类</a>
-                            <a href="#" class="list-group-item">
+                            <a href="post/show/1" class="list-group-item">
                                 <img src="img/jiantouhui.png" class="text-right"/>
                                 技术交流
                             </a>
-                            <a href="#" class="list-group-item">
+                            <a href="post/show/2" class="list-group-item">
                                 <img src="img/jiantouhui.png" class="text-right"/>
                                 校闻趣事
                             </a>
-                            <a href="#" class="list-group-item">
+                            <a href="post/show/3" class="list-group-item">
                                 <img src="img/jiantouhui.png" class="text-right"/>
                                 社团活动
                             </a>
-                            <a href="#" class="list-group-item">
+                            <a href="post/show/4" class="list-group-item">
                                 <img src="img/jiantouhui.png" class="text-right"/>
                                 校园一角
                             </a>
-                            <a href="#" class="list-group-item">
+                            <a href="post/show/5" class="list-group-item">
                                 <img src="img/jiantouhui.png" class="text-right"/>
                                 美食佳肴
                             </a>
-                            <a href="#" class="list-group-item">
+                            <a href="post/show/6" class="list-group-item">
                                 <img src="img/jiantouhui.png" class="text-right"/>
                                 政史评谈
                             </a>
                         </div>
                     </div>
-                    <div class="div-right-top-bottom">
+                    <div class="div-right-top-bottom" id="toPost">
                         发帖
                     </div>
                 </div>

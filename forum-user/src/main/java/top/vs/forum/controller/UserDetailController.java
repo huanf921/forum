@@ -1,21 +1,23 @@
 package top.vs.forum.controller;
 
-import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import top.vs.forum.api.ForumPostFeignClient;
 import top.vs.forum.constant.ForumConstant;
 import top.vs.forum.dto.ResultDTO;
 import top.vs.forum.dto.UserBriefInfoDTO;
 import top.vs.forum.dto.UserDetailInfoDTO;
+import top.vs.forum.dto.UserPostBriefInfoDTO;
 import top.vs.forum.po.User;
+import top.vs.forum.po.UserDetail;
 import top.vs.forum.service.UserDetailService;
 
 import javax.servlet.http.HttpSession;
-import java.io.File;
+import java.util.List;
 
 /**
  * <p>
@@ -32,9 +34,16 @@ public class UserDetailController {
     @Autowired
     private UserDetailService userDetailService;
 
+    @Autowired
+    private ForumPostFeignClient forumPostFeignClient;
+
     @GetMapping("/zone/page/{userId}")
-    public String toZonePage(@PathVariable("userId") Integer userId) {
-        // log.info("访问空间");
+    public String toZonePage(@PathVariable("userId") Integer userId, ModelMap map) {
+        // 存放当前进入的空间所属用户id
+        map.addAttribute(ForumConstant.ATTR_NAME_CUR_QRY_USER_ID, userId);
+
+        // 对缓存中的用户访问量进行维护
+        userDetailService.updRedisUserVisits(userId);
         return "user-zone";
     }
 
@@ -55,6 +64,22 @@ public class UserDetailController {
     }
 
     /**
+     * 查询用户简要论坛信息
+     * @param userId
+     * @return
+     */
+    @GetMapping("/get/user/post/brief/info/{userId}")
+    @ResponseBody
+    public ResultDTO<List<UserPostBriefInfoDTO>> getUserPostBriefInfo(@PathVariable("userId") Integer userId) {
+        ResultDTO<List<UserPostBriefInfoDTO>> res = forumPostFeignClient.getUserPostBriefInfo(userId);
+        if (res.getCode().equals("200")) {
+            return res;
+        } else {
+            return ResultDTO.error("500", res.getMessage());
+        }
+    }
+
+    /**
      * 查询用户详细信息（主要用于用户管理页面）
      * @param userId
      * @return
@@ -65,6 +90,23 @@ public class UserDetailController {
         try {
             UserDetailInfoDTO userDetailInfoDTO = userDetailService.getUserDetailInfo(userId);
             return ResultDTO.ok(userDetailInfoDTO);
+        } catch (Exception e) {
+            return ResultDTO.error("500", e.getMessage());
+        }
+    }
+
+    /**
+     * 初始化用户详情信息
+     * @param userId
+     * @return
+     */
+    @GetMapping("/save/user/detail/info/{userId}")
+    public ResultDTO saveUserDetailInfo(@PathVariable("userId") Integer userId){
+        UserDetail userDetail = new UserDetail();
+        try {
+            userDetail.setHeadUrl("https://static.runoob.com/images/mix/img_avatar.png");
+            userDetailService.save(userDetail);
+            return ResultDTO.ok();
         } catch (Exception e) {
             return ResultDTO.error("500", e.getMessage());
         }

@@ -1,10 +1,10 @@
 package top.vs.forum.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import top.vs.forum.mapper.PostCommentMapper;
 import top.vs.forum.po.PostComment;
+import top.vs.forum.service.PostCommentService;
 
 /**
  * <p>
@@ -15,6 +15,6 @@ import top.vs.forum.po.PostComment;
  * @since 2021-03-09
  */
 @Service
-public class PostCommentServiceImpl extends ServiceImpl<PostCommentMapper, PostComment> implements IService<PostComment> {
+public class PostCommentServiceImpl extends ServiceImpl<PostCommentMapper, PostComment> implements PostCommentService {
 
 }

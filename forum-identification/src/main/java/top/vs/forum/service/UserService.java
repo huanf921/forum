@@ -1,6 +1,7 @@
 package top.vs.forum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import top.vs.forum.dto.PostRedisDTO;
 import top.vs.forum.po.User;
 import top.vs.forum.vo.UserInfoVO;
 
@@ -19,4 +20,6 @@ public interface UserService extends IService<User> {
     List<UserInfoVO> getWeekHotUsers();
 
     void initRedisUserSimpleInfo(Integer id);
+
+    List<PostRedisDTO> getWeekHotPosts();
 }

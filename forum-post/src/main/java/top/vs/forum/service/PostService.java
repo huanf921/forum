@@ -1,7 +1,12 @@
 package top.vs.forum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import top.vs.forum.dto.TypePostDTO;
+import top.vs.forum.dto.UserPostBriefInfoDTO;
+import top.vs.forum.dto.UserToPostDTO;
 import top.vs.forum.po.Post;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +18,13 @@ import top.vs.forum.po.Post;
  */
 public interface PostService extends IService<Post> {
 
+    void saveUserToPostInfo(UserToPostDTO userToPostDTO);
+
+    List<UserPostBriefInfoDTO> getUserPostBriefInfo(Integer userId);
+
+    List<Post> listPostReplies();
+
+    Post getSimpleInfoById(Long postId);
+
+    List<TypePostDTO> listTypePosts(String type);
 }

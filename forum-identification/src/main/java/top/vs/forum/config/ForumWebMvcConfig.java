@@ -12,6 +12,8 @@ public class ForumWebMvcConfig implements WebMvcConfigurer {
     @Value("${file.album.upload}")
     private String albumUploadPath;
 
+    @Value("${file.post.file}")
+    private String postFilePath;
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/ident/login/page").setViewName("login");
@@ -20,6 +22,7 @@ public class ForumWebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/album/**").addResourceLocations("file:" + albumUploadPath);
+        registry.addResourceHandler("/post-file/**").addResourceLocations("file:" + postFilePath);
     }
 
 }
