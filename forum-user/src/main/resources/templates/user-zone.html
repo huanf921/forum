@@ -5,6 +5,7 @@
     <title>用户空间</title>
     <base th:href="@{/}"/>
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/layui.css">
     <style>
         /* 导航栏不折叠 */
         /* 最小宽度 */
@@ -113,6 +114,21 @@
             cursor: pointer;
         }
 
+        .user-top-in-button11 {
+            text-align: center;
+            position: absolute;
+            border: solid 1px rgb(196, 186, 185);
+            font-weight: 500;
+            color: rgb(196, 186, 185);
+            border-radius: 14px;
+            padding: 3px;
+            width: 140px;
+            top: 65px;
+            /* left: 0px; */
+            left: 80px;
+            cursor: pointer;
+        }
+
         .user-top-in-button2 {
             text-align: center;
             position: absolute;
@@ -128,7 +144,7 @@
         }
 
         .user-top-in-button1:hover, .user-top-in-button2:hover {
-            background-color: #eee;
+            /*background-color: #eee;*/
         }
 
         .input {
@@ -162,21 +178,27 @@
         }
 
         .luntan-title {
-            margin-top: 15px;
+            margin-top: 19px;
             font-size: 18px;
+        }
+
+        .luntan-title:hover{
+            cursor: pointer;
+            color: coral;
         }
 
         .luntan-bottom {
             position: absolute;
             left: 0px;
             bottom: 2px;
-            color: #666;
+            /*color: cornflowerblue;*/
         }
 
         .shoucang {
             position: relative;
             min-height: 80px;
-            padding-bottom: 20px;
+            padding-top: 10px;
+            padding-bottom: 9px;
             overflow: hidden;
             border-bottom: solid 1px #ddd;
         }
@@ -193,6 +215,7 @@
             position: absolute;
             top: 15px;
             left: 20px;
+            cursor: pointer;
         }
 
         .guanzhu-user {
@@ -224,8 +247,32 @@
             cursor: pointer;
         }
 
-        .guanzhu-button:hover {
-            background-color: #eee;
+        .notguan-button{
+            text-align: center;
+            position: absolute;
+            border: solid 1px rgb(196, 186, 185);
+            font-weight: 500;
+            color: rgb(196, 186, 185);
+            border-radius: 14px;
+            padding: 3px;
+            width: 80px;
+            top: 27px;
+            right: 30px;
+            cursor: not-allowed;
+        }
+
+        .yiguan-button{
+            text-align: center;
+            position: absolute;
+            border: solid 1px rgb(196, 186, 185);
+            font-weight: 500;
+            color: rgb(196, 186, 185);
+            border-radius: 14px;
+            padding: 3px;
+            width: 80px;
+            top: 27px;
+            right: 30px;
+            cursor: pointer;
         }
 
         .right-bottom {
@@ -241,6 +288,41 @@
             border-radius: 5px;
         }
 
+        .shoucang-img {
+            display: inline-block;
+            width: 35px;
+            /*margin-top: 5px;*/
+            /*margin-right: 3px;*/
+        }
+        .shoucang-img:hover{
+            cursor: pointer;
+        }
+        .shoucang-top{
+            height: 25px;
+            line-height: 25px;
+            margin-left: 8px;
+            display: inline-block;
+            color: #bbb;
+        }
+        .shoucang-title{
+            margin-top: 8px;
+            margin-left: 4px;
+            font-size: 16px;
+        }
+        .shoucang-title:hover {
+            cursor: pointer;
+            color: coral;
+        }
+        .shoucang-bottom{
+            margin-top: 7px;
+            color: cornflowerblue;
+        }
+        .shoucang-name{
+            color: cornflowerblue;
+        }
+        .shoucang-name:hover {
+            cursor: pointer;
+        }
         @media screen and (max-width: 1200px) {
             #myScrollspy {
                 display: none;
@@ -251,13 +333,80 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="layer/layer.js"></script>
-    <script>
+    <script th:inline="javascript">
+        let hasShouCang = 0
+        let hasGuanZhu = 0
+        let hasXiangCe = 0
+
+        function isSubscribed(userId, subId) {
+            let res = false;
+            $.ajax({
+                "url": "/user/personal/get/user/subscribes/" + userId,
+                "type": "get",
+                "dataType": "json",
+                "async": false,
+                "success": function (responseData) {
+                    let code = responseData.code;
+                    if (code == "200") {
+                        let data = responseData.data;
+                        if ($.inArray(parseInt(subId), data) >= 0) {
+                            res = true
+                        }
+                    } else {
+                        layer.msg("获取关注信息失败：" + responseData.message);
+                    }
+
+                }
+            })
+            return res
+        }
         function removecolor() {
             $("#button1,#button2,#button3,#button4").removeClass("buttoncolor");
             $("#luntan,#shoucang,#guanzhu,#xiangce").addClass("div-right");
         };
         $(function () {
+            // 获取用户头像
+            $.ajax({
+                "url": "/user/get/user/head/url/" + [[${session.loginUser.id}]],
+                "type": "get",
+                "dataType": "json",
+                "success": function (responseData) {
+                    if (responseData.code == 200){
+                        $("#lis").prepend(
+                            "<li>" +
+                            "   <a style='width: 58px; height: 50px;' href='http://www.huanforum.com/user/zone/page/"+[[${session.loginUser.id}]]+"'>" +
+                            "       <img class='img-circle' width='30px' height='30px' src='" + responseData.data + "'/>" +
+                            "   </a>" +
+                            "</li>"
+                        )
+                    }
+
+                }
+            })
             $("#portal").removeClass("active")
+
+            // 获取用户未读动态及消息
+            $.ajax({
+                "url": "/user/personal/get/user/unread/" + [[${session.loginUser.id}]],
+                "type": "get",
+                "dataType": "json",
+                "success": function (responseData) {
+                    if (responseData.code == 200){
+                        let unreadPair = responseData.data
+                        let unreadActs = unreadPair.key
+                        let unreadMsgs = unreadPair.value
+
+                        if (unreadActs != 0) {
+                            let unreadSpan = "<span class='layui-badge  layui-bg-green' style='margin-left: 2px'>" + unreadActs + "</span>"
+                            $("#activity a").append(unreadSpan)
+                        }
+                        if (unreadMsgs != 0) {
+                            let unreadSpan = "<span class='layui-badge  layui-bg-green' style='margin-left: 2px'>" + unreadMsgs + "</span>"
+                            $("#message a").append(unreadSpan)
+                        }
+                    }
+                }
+            })
 
             // 页面加载时获取用户简要信息
             let albumUrls = null
@@ -329,39 +478,301 @@
                 $("#luntan").removeClass("div-right");
             });
             $("#button2").click(function () {
+                // 获取收藏信息
+                if (hasShouCang == 0) {
+                    $.ajax({
+                        "url": "/user/personal/get/star/posts/" + [[${curQryUserId}]],
+                        "type": "get",
+                        "dataType": "json",
+                        "success": function (responseData) {
+                            if (responseData.code == 200){
+                                let starPosts = responseData.data
+                                for (let i = 0; i < starPosts.length; i++) {
+                                    let starPost = starPosts[i]
+                                    let starPostDiv =
+                                        "<div class=\"shoucang\">\n" +
+                                        "    <img id='" + starPost.userId + "' src=\"" + starPost.headUrl + "\" class=\"img-circle shoucang-img\"/>\n" +
+                                        "        <div class=\"shoucang-top\"><span id='" + starPost.userId + "' class=\"shoucang-name\">" + starPost.name + "</span><span style=\"margin-left: 20px;\">发布的帖子</span></div>\n" +
+                                        "        <div id='" + starPost.postId + "' class=\"shoucang-title\">" + starPost.title + "</div>\n" +
+                                        "        <div class=\"shoucang-bottom\"><span style=\"margin-left: 5px;\">" + starPost.time.replace(/T/, '  ') +
+                                        "           <span style=\"margin-left: 20px;\">" + starPost.type + "</span>" +
+                                        "        </div>\n" +
+                                        "</div>"
+                                    $("#shoucang").append(starPostDiv)
+                                }
+                                // <div class="shoucang">
+                                //     <img src="https://static.runoob.com/images/mix/img_avatar.png" class="img-circle shoucang-img"/>
+                                //         <div class="shoucang-top"><span class="shoucang-name">撒大苏打的</span><span style="margin-left: 20px;">发布的帖子</span></div>
+                                //         <div class="shoucang-title">撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒</div>
+                                //         <div class="shoucang-bottom"><span style="margin-left: 5px;">2014-02-45</span><span
+                                //             style="margin-left: 5px;">09:56:55</span></div>
+                                // </div>
+                                hasShouCang = 1
+                            }
+
+                        }
+                    })
+                }
                 removecolor();
                 $("#button2").addClass("buttoncolor");
                 $("#shoucang").removeClass("div-right");
             });
             $("#button3").click(function () {
+                if (hasGuanZhu == 0) {
+                    $.ajax({
+                        "url": "/user/personal/get/user/all/subscribes/" + [[${curQryUserId}]],
+                        "type": "get",
+                        "dataType": "json",
+                        "success": function (responseData) {
+                            if (responseData.code == 200){
+                                let subscribeUsers = responseData.data
+                                for (let i = 0; i < subscribeUsers.length; i++) {
+                                    let subscribeUser = subscribeUsers[i]
+                                    let subscribeUserDiv =
+                                        "<div class=\"guanzhu\">\n" +
+                                        "<img id='" + subscribeUser.userId + "' src=\"" + subscribeUser.headUrl + "\"\n" +
+                                        "     class=\"img-circle guanzhu-img\" style=\"width:50px\">\n" +
+                                        "    <div id='" + subscribeUser.userId + "' class=\"guanzhu-user\">" + subscribeUser.name + "</div>\n" +
+                                        "    <div class=\"guanzhu-users\">粉丝：<span>" + subscribeUser.fans + "</span></div>\n"
+                                        if (isSubscribed([[${session.loginUser.id}]], subscribeUser.userId)) {
+                                            subscribeUserDiv += "    <div id='" + subscribeUser.userId + "' class= 'yiguan-button'>已关注</div>\n"
+                                        } else {
+                                            if (subscribeUser.userId == [[${session.loginUser.id}]]) {
+                                                subscribeUserDiv += "    <div id='" + subscribeUser.userId + "' class= 'notguan-button'>关注</div>\n"
+                                            } else {
+                                                subscribeUserDiv += "    <div id='" + subscribeUser.userId + "' class= 'guanzhu-button'>关注</div>\n"
+                                            }
+                                        }
+                                        subscribeUserDiv += "</div>"
+                                    $("#guanzhu").append(subscribeUserDiv)
+                                }
+                                // <div class="guanzhu">
+                                // <img src="https://static.runoob.com/images/mix/img_avatar.png"
+                                //      class="img-circle guanzhu-img" style="width:50px">
+                                //     <div class="guanzhu-user">d撒打算</div>
+                                //     <div class="guanzhu-users">粉丝：<span>s'd</span></div>
+                                //     <div class="guanzhu-button">关注</div>
+                                // </div>
+                                hasGuanZhu = 1
+                            }
+
+                        }
+                    })
+                }
                 removecolor();
                 $("#button3").addClass("buttoncolor");
                 $("#guanzhu").removeClass("div-right");
             });
             $("#button4").click(function () {
+                if (hasXiangCe == 0) {
+                    for (let i = 0; i < albumUrls.length; i++) {
+                        let albumUrl = albumUrls[i];
+                        let rowDiv = "<div class='row'></div>"
+                        let albumPic =
+                            "<div class=\"col-sm-6 col-md-3\">\n" +
+                            "    <a class=\"thumbnail\">\n" +
+                            "        <img src=\"" + albumUrl + "\"\n" +
+                            "             alt=\"通用的占位符缩略图\">\n" +
+                            "    </a>\n" +
+                            "</div>"
+                        $("#xiangce").append(albumPic)
+                        if ((i + 1) % 4 == 0) {
+                            $("#xiangce").append(rowDiv)
+                        }
+
+                    }
+                    hasXiangCe = 1
+                }
                 removecolor();
                 $("#button4").addClass("buttoncolor");
                 $("#xiangce").removeClass("div-right");
-
-                for (let i = 0; i < albumUrls.length; i++) {
-                    let albumUrl = albumUrls[i];
-                    let rowDiv = "<div class='row'></div>"
-                    let albumPic =
-                        "<div class=\"col-sm-6 col-md-3\">\n" +
-                        "    <a class=\"thumbnail\">\n" +
-                        "        <img src=\"" + albumUrl + "\"\n" +
-                        "             alt=\"通用的占位符缩略图\">\n" +
-                        "    </a>\n" +
-                        "</div>"
-                    $("#xiangce").append(albumPic)
-                    if ((i + 1) % 4 == 0) {
-                        $("#xiangce").append(rowDiv)
-                    }
-
-                }
             });
 
+            if (isSubscribed([[${session.loginUser.id}]], [[${curQryUserId}]])) {
+                $("#subBtn").removeClass("user-top-in-button1")
+                $("#subBtn").addClass("user-top-in-button11")
+                $("#subBtn").text("已关注")
+            }
         });
+        $(document).on('click', '.luntan', function (){
+            // console.log(this)
+            window.location.href = "/post/show/post/page/" + this.id + "/1"
+        })
+        $(document).on('click', '.shoucang-title', function (){
+            // console.log(this)
+            window.location.href = "/post/show/post/page/" + this.id + "/1"
+        })
+        $(document).on('click', '.shoucang-img', function () {
+            let userId = $(this).attr('id')
+            // console.log(userId)
+            window.location.href = "/user/zone/page/" + userId
+        })
+        $(document).on('click', '.shoucang-name', function () {
+            let userId = $(this).attr('id')
+            // console.log(userId)
+            window.location.href = "/user/zone/page/" + userId
+        })
+        $(document).on('click', '.guanzhu-img', function () {
+            let userId = $(this).attr('id')
+            // console.log(userId)
+            window.location.href = "/user/zone/page/" + userId
+        })
+        $(document).on('click', '.guanzhu-user', function () {
+            let userId = $(this).attr('id')
+            // console.log(userId)
+            window.location.href = "/user/zone/page/" + userId
+        })
+        $(document).on('click', '.guanzhu-button', function () {
+            let gz = $(this)
+            let subscribeId = $(this).attr('id')
+            // console.log(id)
+            let userId = [[${session.loginUser.id}]]
+            $.ajax({
+                "url": "/user/personal/save/user/subscribes",
+                "type": "post",
+                "data": {
+                    "userId": userId,
+                    "subscribeId": subscribeId
+                },
+                "dataType": "json",
+                "success": function (responseData) {
+                    if (responseData.code != 200) {
+                        layer.open({
+                            title: '提示',
+                            content: '关注失败，服务器繁忙'
+                            , btn: ['确定']
+                            , btn1: function (index, layero) {
+                                layer.close(index)
+                            }
+                        })
+                        console.log("关注失败，错误信息：" + responseData.message)
+                    } else {
+                        gz.removeClass("guanzhu-button")
+                        gz.addClass("yiguan-button")
+                        gz.text("已关注")
+                    }
+                }
+            })
+        })
+        $(document).on('click', '.yiguan-button', function () {
+            let ygz = $(this)
+            let subscribeId = $(this).attr('id')
+            // console.log(id)
+            let userId = [[${session.loginUser.id}]]
+            layer.open({
+                title: '提示',
+                content: '是否取消关注'
+                , btn: ['确定', '取消']
+                , btn1: function (index, layero) {
+                    layer.close(index)
+                    $.ajax({
+                        "url": "/user/personal/rem/user/subscribes",
+                        "type": "post",
+                        "data": {
+                            "userId": userId,
+                            "subscribeId": subscribeId
+                        },
+                        "dataType": "json",
+                        "success": function (responseData) {
+                            if (responseData.code != 200) {
+                                layer.open({
+                                    title: '提示',
+                                    content: '取消关注失败，服务器繁忙'
+                                    , btn: ['确定']
+                                    , btn1: function (index, layero) {
+                                        layer.close(index)
+                                    }
+                                })
+                                console.log("取消关注失败，错误信息：" + responseData.message)
+                            } else {
+                                ygz.removeClass("yiguan-button")
+                                ygz.addClass("guanzhu-button")
+                                ygz.text("关注")
+                            }
+                        }
+                    })
+                }
+                , btn2: function (index, layero) {
+                    layer.close(index)
+                }
+            })
+
+        })
+        $(document).on('click', '#subBtn', function () {
+            let btn = $(this)
+            let userId = [[${session.loginUser.id}]]
+            let subscribeId = [[${curQryUserId}]]
+            let status = btn.text() == "关注" ? 0 : 1
+            if (status == 0) {
+                // 未关注
+                $.ajax({
+                    "url": "/user/personal/save/user/subscribes",
+                    "type": "post",
+                    "data": {
+                        "userId": userId,
+                        "subscribeId": subscribeId
+                    },
+                    "dataType": "json",
+                    "success": function (responseData) {
+                        if (responseData.code != 200) {
+                            layer.open({
+                                title: '提示',
+                                content: '关注失败，服务器繁忙'
+                                , btn: ['确定']
+                                , btn1: function (index, layero) {
+                                    layer.close(index)
+                                }
+                            })
+                            console.log("关注失败，错误信息：" + responseData.message)
+                        } else {
+                            btn.removeClass("user-top-in-button1")
+                            btn.addClass("user-top-in-button11")
+                            btn.text("已关注")
+                        }
+                    }
+                })
+            } else {
+                // 已关注
+                layer.open({
+                    title: '提示',
+                    content: '是否取消关注'
+                    , btn: ['确定', '取消']
+                    , btn1: function (index, layero) {
+                        layer.close(index)
+                        $.ajax({
+                            "url": "/user/personal/rem/user/subscribes",
+                            "type": "post",
+                            "data": {
+                                "userId": userId,
+                                "subscribeId": subscribeId
+                            },
+                            "dataType": "json",
+                            "success": function (responseData) {
+                                if (responseData.code != 200) {
+                                    layer.open({
+                                        title: '提示',
+                                        content: '取消关注失败，服务器繁忙'
+                                        , btn: ['确定']
+                                        , btn1: function (index, layero) {
+                                            layer.close(index)
+                                        }
+                                    })
+                                    console.log("取消关注失败，错误信息：" + responseData.message)
+                                } else {
+                                    btn.removeClass("user-top-in-button11")
+                                    btn.addClass("user-top-in-button1")
+                                    btn.text("关注")
+                                }
+                            }
+                        })
+                    }
+                    , btn2: function (index, layero) {
+                        layer.close(index)
+                    }
+                })
+            }
+
+        })
     </script>
 </head>
 <body>
@@ -397,16 +808,19 @@
                                             class="user-top-in-type3">456</span>
                                     </div>
 
-                                    <div class="user-top-in-button1">关注</div>
+                                    <th:block th:if="${curQryUserId != session.loginUser.id}">
+                                        <div id="subBtn" class="user-top-in-button1">关注</div>
+                                    </th:block>
+
                                 </div>
                             </div>
                         </div>
-                        <div class="input input-group">
-                            <input type="text" class="form-control" placeholder="请输入您想要搜索的帖子">
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button">查找</button>
-                            </span>
-                        </div>
+<!--                        <div class="input input-group">-->
+<!--                            <input type="text" class="form-control" placeholder="请输入您想要搜索的帖子">-->
+<!--                            <span class="input-group-btn">-->
+<!--                                <button class="btn btn-default" type="button">查找</button>-->
+<!--                            </span>-->
+<!--                        </div>-->
                     </div>
                 </div>
                 <div class="col-lg-8 col-md-12" style="">
@@ -424,33 +838,11 @@
                             </div>
                             <!-- 收藏 -->
                             <div class="div-right" id="shoucang">
-                                <div class="shoucang">
-                                    <div class="luntan-title">撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒</div>
-                                    <div class="luntan-bottom"><span style="margin-left: 5px;">2014-02-45</span><span
-                                            style="margin-left: 5px;">09:56:55</span></div>
-                                </div>
-                                <div class="shoucang">
-                                    <div class="luntan-title">撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒</div>
-                                    <div class="luntan-bottom"><span style="margin-left: 5px;">2014-02-45</span><span
-                                            style="margin-left: 5px;">09:56:55</span></div>
-                                </div>
+
                             </div>
                             <!-- 关注 -->
                             <div class="div-right" id="guanzhu">
-                                <div class="guanzhu">
-                                    <img src="https://static.runoob.com/images/mix/img_avatar.png"
-                                         class="img-circle guanzhu-img" style="width:50px">
-                                    <div class="guanzhu-user">d撒打算</div>
-                                    <div class="guanzhu-users">粉丝：<span>s'd</span></div>
-                                    <div class="guanzhu-button">关注</div>
-                                </div>
-                                <div class="guanzhu">
-                                    <img src="https://static.runoob.com/images/mix/img_avatar.png"
-                                         class="img-circle guanzhu-img" style="width:50px">
-                                    <div class="guanzhu-user">d撒打算</div>
-                                    <div class="guanzhu-users">粉丝：<span>s'd</span></div>
-                                    <div class="guanzhu-button">关注</div>
-                                </div>
+
                             </div>
                             <!-- 相册 -->
                             <div class="div-right row" id="xiangce">

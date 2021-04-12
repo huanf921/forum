@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import top.vs.forum.dto.ResultDTO;
 import top.vs.forum.dto.UserPostBriefInfoDTO;
+import top.vs.forum.po.Post;
 import top.vs.forum.service.PostService;
 
 import java.util.List;
@@ -35,6 +36,20 @@ public class PostOpenController {
             List<UserPostBriefInfoDTO> userPostBriefInfoDTOS = postService.getUserPostBriefInfo(userId);
 
             return ResultDTO.ok(userPostBriefInfoDTOS);
+        } catch (Exception e) {
+            return ResultDTO.error("500", e.getMessage());
+        }
+    }
+
+    /**
+     * 查询论贴简要信息
+     * @return
+     */
+    @GetMapping("/get/post/brief/info/{postId}")
+    public ResultDTO<Post> getPostBriefInfo(@PathVariable("postId") Long postId) {
+        try {
+            Post post = postService.getById(postId);
+            return ResultDTO.ok(post);
         } catch (Exception e) {
             return ResultDTO.error("500", e.getMessage());
         }

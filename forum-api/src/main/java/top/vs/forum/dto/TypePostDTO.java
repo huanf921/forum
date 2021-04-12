@@ -28,6 +28,11 @@ public class TypePostDTO {
     /**
      * 用户名称
      */
+    private Integer userId;
+
+    /**
+     * 用户名称
+     */
     private String name;
 
     /**

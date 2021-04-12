@@ -13,7 +13,6 @@
     <module>forum-identification</module>
     <module>forum-user</module>
     <module>forum-post</module>
-    <module>forum-personal</module>
     <module>forum-common</module>
     <module>forum-zuul</module>
     <module>forum-api</module>

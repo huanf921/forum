@@ -5,15 +5,17 @@
     <base th:href="@{/}"/>
     <title>某校坛</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/layui.css">
     <style>
         /* 导航栏不折叠 */
         /* 最小宽度 */
-        .text-right{
+        .text-right {
             width: 13px;
             height: 13px;
             float: right;
             margin-top: 4px;
         }
+
         .div0 {
             min-width: 970px;
             background-color: #f5f6f7;
@@ -56,6 +58,7 @@
 
         .div-left-bottom {
             height: 112px;
+            padding-left: 3%;
         }
 
         .div-left-bottom-in {
@@ -82,6 +85,15 @@
             text-overflow: ellipsis;
         }
 
+        .media-heading:hover {
+            color: cornflowerblue;
+            cursor: pointer;
+        }
+
+        .media-object:hover {
+            cursor: pointer;
+        }
+
         .div-left-bottom-in-sum1 {
             color: #AAA;
             font-size: 12px;
@@ -106,6 +118,30 @@
             width: 45px;
             border-radius: 25px;
             cursor: pointer;
+        }
+
+        .NGbutton {
+            margin-top: 10px;
+            margin-left: 12px;
+            text-align: center;
+            padding: 1px;
+            border: solid 1px rgb(196, 186, 185);
+            color: rgb(196, 186, 185);
+            width: 45px;
+            border-radius: 25px;
+            cursor: not-allowed;
+        }
+
+        .YGbutton {
+            margin-top: 10px;
+            margin-left: 12px;
+            text-align: center;
+            padding: 1px;
+            border: solid 1px rgb(196, 186, 185);
+            color: rgb(196, 186, 185);
+            width: 55px;
+            border-radius: 25px;
+            cursor: not-allowed;
         }
 
         .div2-left-bottom {
@@ -174,7 +210,7 @@
             color: rgb(255, 61, 61);
             width: 115px;
             border-radius: 25px;
-            cursor: pointer;
+            /*cursor: pointer;*/
         }
 
         .div-right-top-in-button3 {
@@ -188,7 +224,7 @@
             color: rgb(255, 61, 61);
             width: 115px;
             border-radius: 25px;
-            cursor: pointer;
+            /*cursor: pointer;*/
         }
 
         .div-right-top-center {
@@ -238,7 +274,12 @@
             }
         }
 
-        .post-title{
+        .post-type:hover {
+            cursor: pointer;
+            color: #0e90d2;
+        }
+
+        .post-title {
             font-weight: bold;
         }
 
@@ -252,32 +293,70 @@
     <script src="layer/layer.js"></script>
     <script th:inline="javascript">
         // console.log([[${session.loginUser}]])
-        $(function (){
+        let map = [
+            ["技术交流", 1],
+            ["校闻趣事", 2],
+            ["社团活动", 3],
+            ["校园一角", 4],
+            ["美食佳肴", 5],
+            ["政史评谈", 6]
+        ]
+        $(function () {
+            // 获取用户未读动态及消息
+            $.ajax({
+                "url": "/user/personal/get/user/unread/" + [[${session.loginUser.id}]],
+                "type": "get",
+                "dataType": "json",
+                "success": function (responseData) {
+                    if (responseData.code == 200){
+                        let unreadPair = responseData.data
+                        let unreadActs = unreadPair.key
+                        let unreadMsgs = unreadPair.value
+
+                        if (unreadActs != 0) {
+                            let unreadSpan = "<span class='layui-badge  layui-bg-green' style='margin-left: 2px'>" + unreadActs + "</span>"
+                            $("#activity a").append(unreadSpan)
+                        }
+                        if (unreadMsgs != 0) {
+                            let unreadSpan = "<span class='layui-badge  layui-bg-green' style='margin-left: 2px'>" + unreadMsgs + "</span>"
+                            $("#message a").append(unreadSpan)
+                        }
+                    }
+                }
+            })
             $("#toPost").click(function () {
                 window.location.href = "/post/to/post"
             })
-            $(".logout").click(function (){
+            $(".logout").click(function () {
                 window.location.href = "/ident/logout"
             })
-            $(".headImg").click(function (){
+            $(".headImg").click(function () {
                 console.log(this.id)
                 window.location.href = "/user/zone/page/" + this.id
             })
             $(".div-left-bottom-in").eq(0).css("margin-top", "10px")
             $(".div-left-bottom-in").eq(3).attr("style", "width: 25%; padding-top: 10px")
             $.ajax({
-                "url":"/ident/get/user/info/" + [[${session.loginUser.id}]],
-                "type":"get",
+                "url": "/ident/get/user/info/" + [[${session.loginUser.id}]],
+                "type": "get",
                 // "data":{
                 //     "phoneNum":phoneNum
                 // },
-                "dataType":"json",
-                "success":function(responseData){
+                "dataType": "json",
+                "async": false,
+                "success": function (responseData) {
                     let code = responseData.code;
-                    if(code == "200") {
+                    if (code == "200") {
                         let data = responseData.data;
                         if (data.headUrl != null) {
                             $(".headImg").attr("src", data.headUrl);
+                            $("#lis").prepend(
+                                "<li>" +
+                                "   <a style='width: 58px; height: 50px;' href='http://www.huanforum.com/user/zone/page/" + [[${session.loginUser.id}]] + "'>" +
+                                "       <img class='img-circle' width='30px' height='30px' src='" + data.headUrl + "'/>" +
+                                "   </a>" +
+                                "</li>"
+                            )
                         }
                         $(".div-right-top-in-button1").text("粉丝数 " + data.fans);
                         $(".div-right-top-in-button3").text("访问量 " + data.allVisits);
@@ -286,14 +365,113 @@
                     }
 
                 },
-                "error":function(response){
+                "error": function (response) {
                     layer.msg(response.status + " " + response.statusText);
                 }
             });
 
-            $(".post-title").click(function (){
+            //查询用户关注的人id
+            $.ajax({
+                "url": "/user/personal/get/user/subscribes/" + [[${session.loginUser.id}]],
+                "type": "get",
+                "dataType": "json",
+                "success": function (responseData) {
+                    let code = responseData.code;
+                    if (code == "200") {
+                        let data = responseData.data;
+                        console.log(data)
+                        // console.log($(".GZbutton"))
+                        let gzs = $(".GZbutton")
+                        for (let i = 0; i < gzs.length; i++) {
+                            let gz = gzs.eq(i)
+                            let isSubscribeId = gz.attr('id')
+                            // console.log(isSubscribeId)
+                            if (isSubscribeId == [[${session.loginUser.id}]]) {
+                                gz.removeClass("GZbutton")
+                                gz.addClass("NGbutton")
+                                continue
+                            }
+                            if ($.inArray(parseInt(isSubscribeId), data) >= 0) {
+                                gz.removeClass("GZbutton")
+                                gz.addClass("YGbutton")
+                                gz.text("已关注")
+                            }
+                        }
+                    } else {
+                        layer.msg("获取关注信息失败：" + responseData.message);
+                    }
+
+                },
+                "error": function (response) {
+                    layer.msg(response.status + " " + response.statusText);
+                }
+            });
+            //已关注的人则换按钮样式
+            $(".GZbutton")
+
+            $(".post-title").click(function () {
                 // console.log(this)
-                window.location.href = "/post/show/post/page/" + this.id
+                window.location.href = "/post/show/post/page/" + this.id + "/1"
+            })
+        })
+        $(document).on('click', '.media-heading', function () {
+            let userId = $(this).attr('id')
+            // console.log(userId)
+            window.location.href = "/user/zone/page/" + userId
+        })
+        $(document).on('click', '.media-object', function () {
+            let userId = $(this).attr('id')
+            // console.log(userId)
+            window.location.href = "/user/zone/page/" + userId
+        })
+        $(document).on('click', '.post-type', function () {
+            let typeTxt = $(this).text()
+            let type = null
+            for (let i = 0; i < map.length; i++) {
+                let typeArr = map[i]
+                if (typeArr[0] == typeTxt) {
+                    type = typeArr[1]
+                    break
+                }
+            }
+
+            window.location.href = "/post/show/" + type
+        })
+        //点击关注
+        $(document).on('click', '.GZbutton', function () {
+            let gz = $(this)
+            let subscribeId = $(this).attr('id')
+            // console.log(id)
+            let userId = [[${session.loginUser.id}]]
+            $.ajax({
+                "url": "/user/personal/save/user/subscribes",
+                "type": "post",
+                "data": {
+                    "userId": userId,
+                    "subscribeId": subscribeId
+                },
+                "dataType": "json",
+                "success": function (responseData) {
+                    if (responseData.code != 200) {
+                        layer.open({
+                            title: '提示',
+                            content: '关注失败，服务器繁忙'
+                            , btn: ['确定']
+                            , btn1: function (index, layero) {
+                                layer.close(index)
+                            }
+                        })
+                        console.log("关注失败，错误信息：" + responseData.message)
+                    } else {
+                        gz.removeClass("GZbutton")
+                        gz.addClass("YGbutton")
+                        gz.text("已关注")
+                    }
+                },
+                "error": function (res) {
+                    layer.msg("关注失败：" + res.status)
+                    console.log("关注失败，错误信息：" + res.statusText)
+                }
             })
         })
     </script>
@@ -308,25 +486,29 @@
                     <div class="div-left-top1">
                         <h4 class="pull-left" style="font-weight:400;margin-top: 11px;">&nbsp;&nbsp;周飙升榜</h4>
                         <h5 class="pull-right" style="margin-top: 14px;margin-right: 20px;color:#888;cursor: pointer;">
-                            更多</h5>
+                        </h5>
                     </div>
                     <div class="div-left-bottom">
-                        <div th:each="weekHotUser : ${weekHotUsers}" class="media div-left-bottom-in" style="width:25% ;float:left">
+                        <div th:each="weekHotUser : ${weekHotUsers}" class="media div-left-bottom-in"
+                             style="width:25% ;float:left">
                             <div class="media-left">
                                 <th:block th:if="${weekHotUser.headUrl == null}">
                                     <img src="https://static.runoob.com/images/mix/img_avatar.png" class="media-object"
-                                         style="width:90px">
+                                         style="width:90px; height: 90px">
                                 </th:block>
                                 <th:block th:if="${weekHotUser.headUrl != null}">
-                                    <img th:src="${weekHotUser.headUrl}" class="media-object"
-                                         style="width:90px">
+                                    <img th:id="${weekHotUser.userId}" th:src="${weekHotUser.headUrl}"
+                                         class="media-object"
+                                         style="width:90px; height: 90px">
                                 </th:block>
                             </div>
                             <div class="media-body">
-                                <h4 class="media-heading" th:text="${weekHotUser.name}">帖主</h4>
+                                <h4 class="media-heading" th:id="${weekHotUser.userId}" th:text="${weekHotUser.name}">
+                                    帖主</h4>
                                 <div class="button"><span class="div-left-bottom-in-sum1">人气：</span><span
-                                        class="div-left-bottom-in-sum2" th:text="${weekHotUser.weekVisits}">6555</span></div>
-                                <div class="GZbutton">关注</div>
+                                        class="div-left-bottom-in-sum2" th:text="${weekHotUser.weekVisits}">6555</span>
+                                </div>
+                                <div class="GZbutton" th:id="${weekHotUser.userId}">关注</div>
                                 <div></div>
                             </div>
                         </div>
@@ -336,7 +518,7 @@
                     <div class="div2-left-top1">
                         <h4 class="pull-left" style="font-weight:400;margin-top: 11px;">&nbsp;&nbsp;热帖</h4>
                         <h5 class="pull-right" style="margin-top: 14px;margin-right: 20px;color:#888;cursor: pointer;">
-                            更多</h5>
+                        </h5>
                     </div>
                     <div class="">
                         <table class="table table-hover">
@@ -349,12 +531,16 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="weekHotPost : ${weekHotPosts}">
-                                    <td class="post-title div2-left-bottom-tr" th:id="${weekHotPost.postId}" th:text="${weekHotPost.title}">Tanmay</td>
-                                    <td style="color: cornflowerblue" th:text="${weekHotPost.type}">Bangalore</td>
-                                    <td th:text="${weekHotPost.name}">560001</td>
-                                    <td th:text="${weekHotPost.replies}">560001</td>
-                                </tr>
+                            <tr th:each="weekHotPost : ${weekHotPosts}">
+                                <td class="post-title div2-left-bottom-tr" th:id="${weekHotPost.postId}"
+                                    th:text="${weekHotPost.title}">Tanmay
+                                </td>
+                                <td style="color: cornflowerblue" class="post-type" th:text="${weekHotPost.type}">
+                                    Bangalore
+                                </td>
+                                <td th:text="${weekHotPost.name}">560001</td>
+                                <td th:text="${weekHotPost.replies}">560001</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -365,9 +551,11 @@
                     <div class="div-right-top">
                         <div v-if="true" class="div-right-top-in">
                             <img src="https://static.runoob.com/images/mix/img_avatar.png"
-                                 class="img-circle div-right-top-in-img headImg" style="width:90px" th:id="${session.loginUser.id}">
+                                 class="img-circle div-right-top-in-img headImg" style="width:90px"
+                                 th:id="${session.loginUser.id}">
                             <th:block th:if="${session.loginUser != null}">
-                                <div class="div-right-top-in-user">[[${session.loginUser.name}]]<span class="logout">退出</span></div>
+                                <div class="div-right-top-in-user">[[${session.loginUser.name}]]<span
+                                        class="logout">退出</span></div>
                             </th:block>
                             <div class="div-right-top-in-button1"></div>
                             <div class="div-right-top-in-button3"></div>

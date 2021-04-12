@@ -1,7 +1,9 @@
 package top.vs.forum.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.vs.forum.po.PostComment;
+import top.vs.forum.vo.PostCommentVO;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import top.vs.forum.po.PostComment;
  */
 public interface PostCommentService extends IService<PostComment> {
 
+    void pagePostComments(Long postId, Page<PostComment> page, PostCommentVO postCommentVO);
 }

@@ -1,12 +1,13 @@
 package top.vs.forum.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -34,44 +35,19 @@ public class Message extends Model<Message> {
     private Integer userId;
 
     /**
-     * 消息类型（1：被关注 2：关注者发帖 3：被回复帖子 4：被回复评论 5：被回复评论回复）
+     * 点赞/回复/关注者id
+     */
+    private Integer srcUserId;
+
+    /**
+     * 消息类型（1：被关注 2：被点赞帖子 3：被回复帖子）
      */
     private Integer type;
 
     /**
-     * 关注者id
-     */
-    private Integer subscribeId;
-
-    /**
-     * 被关注者发表的帖子id
+     * 被点赞/回复的帖子id
      */
     private Long postId;
-
-    /**
-     * 回复者id
-     */
-    private Integer replyUserId;
-
-    /**
-     * 回复帖子id
-     */
-    private Long replyPostId;
-
-    /**
-     * 回复评论id
-     */
-    private Long replyCommentId;
-
-    /**
-     * 回复评论回复id
-     */
-    private Long replyReplyId;
-
-    /**
-     * 被关注者id
-     */
-    // private Integer toSubscribeId;
 
     /**
      * 消息时间

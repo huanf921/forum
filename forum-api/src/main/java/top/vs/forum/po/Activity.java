@@ -1,12 +1,13 @@
 package top.vs.forum.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -34,14 +35,19 @@ public class Activity extends Model<Activity> {
     private Integer userId;
 
     /**
-     * 动态类型
+     * 关注者id
+     */
+    private Integer subscribeId;
+
+    /**
+     * 动态类型（被关注者 1、发帖 2、藏帖 3、回帖 4、关注）
      */
     private Integer type;
 
     /**
-     * 收藏/回复帖子id
+     * 发表/收藏/回复帖子id
      */
-    private Long starReplyId;
+    private Long postId;
 
     /**
      * 被关注者id

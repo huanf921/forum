@@ -13,9 +13,11 @@
         <module name="forum-api" />
         <module name="forum-identification" />
         <module name="forum-user" />
-        <module name="forum-personal" />
         <module name="forum-zuul" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="forum-personal" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

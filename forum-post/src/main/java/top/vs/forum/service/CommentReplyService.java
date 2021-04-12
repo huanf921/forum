@@ -2,6 +2,9 @@ package top.vs.forum.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import top.vs.forum.po.CommentReply;
+import top.vs.forum.vo.CommentReplyVO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import top.vs.forum.po.CommentReply;
  */
 public interface CommentReplyService extends IService<CommentReply> {
 
+    List<CommentReplyVO> getCommentReplyInfo(Long commentId);
 }

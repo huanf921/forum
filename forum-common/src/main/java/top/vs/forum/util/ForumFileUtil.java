@@ -16,6 +16,9 @@ public class ForumFileUtil {
     public static File getRandomFile(String fileName, String filePath){
         // 创建保存路径的文件对象
         File saveDir = new File(filePath);
+        if (!saveDir.exists()) {
+            saveDir.mkdirs();
+        }
 
         // 生成随机文件名
         int beginIndex = fileName.lastIndexOf(".");

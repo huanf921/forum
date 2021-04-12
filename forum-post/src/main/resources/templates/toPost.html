@@ -11,6 +11,7 @@
     <!-- <link href="bootstrap-combined.no-icons.min.css" rel="stylesheet"> -->
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/layui.css">
 
     <style>
         .div0 {
@@ -98,6 +99,46 @@
 
         $(function () {
 
+            // 获取用户头像
+            $.ajax({
+                "url": "/user/get/user/head/url/" + [[${session.loginUser.id}]],
+                "type": "get",
+                "dataType": "json",
+                "success": function (responseData) {
+                    if (responseData.code == 200){
+                        $("#lis").prepend(
+                            "<li>" +
+                            "   <a style='width: 58px; height: 50px;' href='http://www.huanforum.com/user/zone/page/"+[[${session.loginUser.id}]]+"'>" +
+                            "       <img class='img-circle' width='30px' height='30px' src='" + responseData.data + "'/>" +
+                            "   </a>" +
+                            "</li>"
+                        )
+                    }
+
+                }
+            })
+            // 获取用户未读动态及消息
+            $.ajax({
+                "url": "/user/personal/get/user/unread/" + [[${session.loginUser.id}]],
+                "type": "get",
+                "dataType": "json",
+                "success": function (responseData) {
+                    if (responseData.code == 200){
+                        let unreadPair = responseData.data
+                        let unreadActs = unreadPair.key
+                        let unreadMsgs = unreadPair.value
+
+                        if (unreadActs != 0) {
+                            let unreadSpan = "<span class='layui-badge  layui-bg-green' style='margin-left: 2px'>" + unreadActs + "</span>"
+                            $("#activity a").append(unreadSpan)
+                        }
+                        if (unreadMsgs != 0) {
+                            let unreadSpan = "<span class='layui-badge  layui-bg-green' style='margin-left: 2px'>" + unreadMsgs + "</span>"
+                            $("#message a").append(unreadSpan)
+                        }
+                    }
+                }
+            })
             $("#go").on("click",function () {
                 // console.log('asdasd', $("#editor").html(), 'asdas', $("#control").val())
                 let userId = [[${session.loginUser.id}]]

@@ -22,7 +22,8 @@ public class AccessPassResources {
         STATIC_RES_SET.add("fonts");
         STATIC_RES_SET.add("img");
         STATIC_RES_SET.add("jquery");
-        //STATIC_RES_SET.add("layer");
+        STATIC_RES_SET.add("layer");
+        STATIC_RES_SET.add("album");
         STATIC_RES_SET.add("js");
     }
 

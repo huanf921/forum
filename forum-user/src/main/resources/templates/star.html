@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>收藏</title>
+    <base th:href="@{/}"/>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/layui.css">
+    <style>
+        .div0 {
+            min-width: 970px;
+            background-color: #f5f6f7;
+            /*background-color: rgb(250, 250, 250);*/
+            /*background: url(beijing.jpg);*/
+            min-height: 1000px;
+        }
+
+        /* ======================= */
+        /* ===阿里图库的图片样式 === */
+        /* ======================= */
+        .icon, .icon-a {
+            width: 1em;
+            height: 1em;
+            vertical-align: -0.15em;
+            fill: currentColor;
+            overflow: hidden;
+        }
+
+        .row1 {
+            margin-top: 64px;
+        }
+
+        /* right */
+        .div-right {
+            display: none;
+        }
+
+        a {
+            cursor: pointer;
+        }
+
+        .buttoncolor {
+            background-color: #eee;
+        }
+
+        .shoucang {
+            position: relative;
+            min-height: 80px;
+            padding-bottom: 3px;
+            padding-top: 10px;
+            overflow: hidden;
+            border-bottom: solid 1px #ddd;
+        }
+
+        .shoucang-img {
+            display: inline-block;
+            width: 35px;
+            /*margin-top: 5px;*/
+            /*margin-right: 3px;*/
+        }
+        .shoucang-img:hover{
+            cursor: pointer;
+        }
+        .shoucang-top{
+            height: 25px;
+            line-height: 25px;
+            margin-left: 8px;
+            display: inline-block;
+            color: #bbb;
+        }
+        .shoucang-title{
+            margin-top: 10px;
+            margin-left: 4px;
+            font-size: 18px;
+        }
+        .shoucang-title:hover {
+            cursor: pointer;
+            color: coral;
+        }
+        .shoucang-bottom{
+            margin-top: 9px;
+            color: cornflowerblue;
+        }
+        .shoucang-name{
+            color: cornflowerblue;
+        }
+        .shoucang-name:hover {
+            cursor: pointer;
+        }
+
+        .right-bottom {
+            /* border:solid 1px rgb(170, 170, 170);
+            border-radius: 6px; */
+            line-height: 25px;
+            text-align: center;
+            height: 80px;
+            margin-top: 15px;
+            background-color: #fff;
+            font-size: 14px;
+            color: #BBB;
+            border-radius: 5px;
+        }
+
+        @media screen and (max-width: 1200px) {
+            #myScrollspy {
+                display: none;
+            }
+        }
+    </style>
+    <script src='js/iconfont.js'></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="layer/layer.js"></script>
+    <script th:inline="javascript">
+        $(function () {
+            // 获取用户头像
+            $.ajax({
+                "url": "/user/get/user/head/url/" + [[${session.loginUser.id}]],
+                "type": "get",
+                "dataType": "json",
+                "success": function (responseData) {
+                    if (responseData.code == 200){
+                        $("#lis").prepend(
+                            "<li>" +
+                            "   <a style='width: 58px; height: 50px;' href='http://www.huanforum.com/user/zone/page/"+[[${session.loginUser.id}]]+"'>" +
+                            "       <img class='img-circle' width='30px' height='30px' src='" + responseData.data + "'/>" +
+                            "   </a>" +
+                            "</li>"
+                        )
+                    }
+
+                }
+            })
+
+            // 获取用户未读动态及消息
+            $.ajax({
+                "url": "/user/personal/get/user/unread/" + [[${session.loginUser.id}]],
+                "type": "get",
+                "dataType": "json",
+                "success": function (responseData) {
+                    if (responseData.code == 200){
+                        let unreadPair = responseData.data
+                        let unreadActs = unreadPair.key
+                        let unreadMsgs = unreadPair.value
+
+                        if (unreadActs != 0) {
+                            let unreadSpan = "<span class='layui-badge  layui-bg-green' style='margin-left: 2px'>" + unreadActs + "</span>"
+                            $("#activity a").append(unreadSpan)
+                        }
+                        if (unreadMsgs != 0) {
+                            let unreadSpan = "<span class='layui-badge  layui-bg-green' style='margin-left: 2px'>" + unreadMsgs + "</span>"
+                            $("#message a").append(unreadSpan)
+                        }
+                    }
+                }
+            })
+
+            $("#portal").removeClass("active")
+            $("#star").addClass("active")
+            // 获取收藏信息
+            $.ajax({
+                "url": "/user/personal/get/star/posts/" + [[${session.loginUser.id}]],
+                "type": "get",
+                "dataType": "json",
+                "async": false,
+                "success": function (responseData) {
+                    let code = responseData.code;
+                    if (code == "200") {
+                        let starPosts = responseData.data;
+                        for (let i = 0; i < starPosts.length; i++) {
+                            let starPost = starPosts[i]
+                            let starPostDiv =
+                                "<div class=\"shoucang\">\n" +
+                                "    <img id='" + starPost.userId + "' src=\"" + starPost.headUrl + "\" class=\"img-circle shoucang-img\"/>\n" +
+                                "        <div class=\"shoucang-top\"><span id='" + starPost.userId + "' class=\"shoucang-name\">" + starPost.name + "</span><span style=\"margin-left: 20px;\">发布的帖子</span></div>\n" +
+                                "        <div id='" + starPost.postId + "' class=\"shoucang-title\">" + starPost.title + "</div>\n" +
+                                "        <div class=\"shoucang-bottom\"><span style=\"margin-left: 5px;\">" + starPost.time.replace(/T/, '  ') +
+                                "           <span style=\"margin-left: 20px;\">" + starPost.type + "</span>" +
+                                "        </div>\n" +
+                                "</div>"
+                            $("#shoucang").append(starPostDiv)
+                        }
+                    } else {
+                        layer.msg("获取收藏信息失败");
+                        console.log("获取收藏信息失败\n" + responseData.message);
+                    }
+
+                }
+            })
+        })
+
+        $(document).on('click', '.shoucang-title', function (){
+            // console.log(this)
+            window.location.href = "/post/show/post/page/" + this.id + "/1"
+        })
+        $(document).on('click', '.shoucang-img', function () {
+            let userId = $(this).attr('id')
+            // console.log(userId)
+            window.location.href = "/user/zone/page/" + userId
+        })
+        $(document).on('click', '.shoucang-name', function () {
+            let userId = $(this).attr('id')
+            // console.log(userId)
+            window.location.href = "/user/zone/page/" + userId
+        })
+    </script>
+</head>
+<body>
+<div class="div0">
+    <div th:replace="nav-head :: head"></div>
+    <div class="container">
+        <div class="row row1">
+            <div class="col-lg-12" style="">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        收藏
+                    </div>
+                    <div class="panel-body">
+                        <!-- 收藏 -->
+                        <div id="shoucang">
+<!--                            <div class="shoucang">-->
+<!--                                <div class="shoucang-title">撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒撒大大大撒大撒</div>-->
+<!--                                <div class="shoucang-bottom"><span style="margin-left: 5px;">2014-02-45</span><span-->
+<!--                                        style="margin-left: 5px;">09:56:55</span></div>-->
+<!--                            </div>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="right-bottom">
+                    <div class="">
+                        <span style="font-size: 14px;">关于我们 招贤纳士 广告服务 开发助手 400-660-XXXXX@qq.com 客服工作时间 8:30-22:00</span><br>
+                        <span style="font-size: 12px;">公安备案号1101050xxxxxx 京ICP备19xxxxxx号京网文〔2021〕1039-165号 经营性网站备案信息 北京互联网违法和不良信息举报中心</span><br>
+                        <span style="font-size: 12px;">网络110报警服务 中国互联网举报中心 家长监护 Chrome商店下载 ©1999-2021北京创新乐知网络技术有限公司 版权与免责声明 版权申诉</span><br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+</html>

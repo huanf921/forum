@@ -15,6 +15,7 @@ import top.vs.forum.dto.UserPostBriefInfoDTO;
 import top.vs.forum.po.User;
 import top.vs.forum.po.UserDetail;
 import top.vs.forum.service.UserDetailService;
+import top.vs.forum.task.PortalUserInfoTask;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -36,6 +37,15 @@ public class UserDetailController {
 
     @Autowired
     private ForumPostFeignClient forumPostFeignClient;
+
+    @Autowired
+    private PortalUserInfoTask portalUserInfoTask;
+
+    @GetMapping("/sync/redis/data/to/db")
+    public String syncRedisDataToDb() {
+        portalUserInfoTask.updUserSimpleInfo2DbFromRedis();
+        return "redirect:http://www.huanforum.com/";
+    }
 
     @GetMapping("/zone/page/{userId}")
     public String toZonePage(@PathVariable("userId") Integer userId, ModelMap map) {

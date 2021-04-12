@@ -5,6 +5,7 @@
     <title>用户个人管理</title>
     <base th:href="@{/}"/>
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/layui.css">
     <style>
 
         .form-signin {
@@ -274,8 +275,50 @@
         }
 
         $(function () {
+            // 获取用户头像
+            $.ajax({
+                "url": "/user/get/user/head/url/" + [[${session.loginUser.id}]],
+                "type": "get",
+                "dataType": "json",
+                "success": function (responseData) {
+                    if (responseData.code == 200){
+                        $("#lis").prepend(
+                            "<li>" +
+                            "   <a style='width: 58px; height: 50px;' href='http://www.huanforum.com/user/zone/page/"+[[${session.loginUser.id}]]+"'>" +
+                            "       <img class='img-circle' width='30px' height='30px' src='" + responseData.data + "'/>" +
+                            "   </a>" +
+                            "</li>"
+                        )
+                    }
+
+                }
+            })
+
             $("#portal").removeClass("active")
             $("#mine").addClass("active")
+
+            // 获取用户未读动态及消息
+            $.ajax({
+                "url": "/user/personal/get/user/unread/" + [[${session.loginUser.id}]],
+                "type": "get",
+                "dataType": "json",
+                "success": function (responseData) {
+                    if (responseData.code == 200){
+                        let unreadPair = responseData.data
+                        let unreadActs = unreadPair.key
+                        let unreadMsgs = unreadPair.value
+
+                        if (unreadActs != 0) {
+                            let unreadSpan = "<span class='layui-badge  layui-bg-green' style='margin-left: 2px'>" + unreadActs + "</span>"
+                            $("#activity a").append(unreadSpan)
+                        }
+                        if (unreadMsgs != 0) {
+                            let unreadSpan = "<span class='layui-badge  layui-bg-green' style='margin-left: 2px'>" + unreadMsgs + "</span>"
+                            $("#message a").append(unreadSpan)
+                        }
+                    }
+                }
+            })
 
             // 点击后样式改变
             $("#button1").click(function () {
@@ -320,11 +363,9 @@
                         $(".user-top-in-type3").eq(2).text(data.allVisits)
                         $(".user-top-in-type3").eq(3).text(data.fans)
 
-                        // 对头像做悬浮样式处理
-
-
                         // 个人信息
                         $(":input[name='name']").val(data.name)
+                        $(".user-top-in-name").eq(0).text(data.name)
                         $(":input[name='userId']").val(data.userId)
                         if (data.sex == "男") {
                             $(":input[name='sex']").eq(0).attr("checked", "checked")
@@ -449,6 +490,7 @@
 
                         if(res.code == "200") {
                             layer.msg("保存成功")
+                            window.location.reload()
                         } else {
                             layer.msg("保存失败：" + res.code)
                             console.log("个人信息保存失败，错误信息：" + res.message)
@@ -635,9 +677,7 @@
                                 <img src="img/setting.png"
                                      class="img-circle user-top-in-img headImgUpd albumPicHover" style="z-index:2;opacity:0.4;width:100px">
                             </label>
-                            <th:block th:if="${session.loginUser} != null">
-                                <div class="user-top-in-name">[[${session.loginUser.name}]]</div>
-                            </th:block>
+                            <div class="user-top-in-name"></div>
                             <div class="user-top-in-type">
                                 <div class="user-top-in-type1">
                                     <span class="user-top-in-type2">周排名</span><br><span

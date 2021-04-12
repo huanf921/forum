@@ -50,6 +50,7 @@
 
         .div-left-bottom {
             height: 112px;
+            padding-left: 3%;
         }
 
         .div-left-bottom-in {
@@ -121,6 +122,13 @@
             border-radius: 10px;
         }
 
+        .post-title{
+            font-weight: bold;
+        }
+
+        .post-title:hover {
+            color: #FD482C;
+        }
         .div-right-top-in {
             /* margin-top: 20px; */
             position: relative;
@@ -248,9 +256,10 @@
         }
 
         .text-right{
-            font-size: 15px;
-            font-weight: bold;
+            width: 13px;
+            height: 13px;
             float: right;
+            margin-top: 4px;
         }
 
         @media screen and (max-width: 1200px) {
@@ -263,6 +272,14 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript">
+        let map = [
+            ["技术交流", 1],
+            ["校闻趣事", 2],
+            ["社团活动", 3],
+            ["校园一角", 4],
+            ["美食佳肴", 5],
+            ["政史评谈", 6]
+        ]
         $(function (){
             $("#toPost").click(function () {
                 window.location.href = "/post/to/post"
@@ -271,7 +288,34 @@
                 window.location.href = "/ident/login/page"
             })
             $(".div-left-bottom-in").eq(0).css("margin-top", "10px")
-            $(".div-left-bottom-in").eq(3).attr("style", "width: 25%; padding-top: 10px")
+            $(".div-left-bottom-in").eq(3).attr("style", "width: 24%; padding-top: 10px")
+            $(".post-title").click(function (){
+                // console.log(this)
+                window.location.href = "/post/show/post/page/" + this.id + "/1"
+            })
+        })
+        $(document).on('click', '.media-heading', function (){
+            let userId = $(this).attr('id')
+            // console.log(userId)
+            window.location.href = "/user/zone/page/" + userId
+        })
+        $(document).on('click', '.media-object', function (){
+            let userId = $(this).attr('id')
+            // console.log(userId)
+            window.location.href = "/user/zone/page/" + userId
+        })
+        $(document).on('click', '.post-type', function (){
+            let typeTxt = $(this).text()
+            let type = null
+            for (let i = 0; i < map.length; i++) {
+                let typeArr = map[i]
+                if (typeArr[0] == typeTxt) {
+                    type = typeArr[1]
+                    break
+                }
+            }
+
+            window.location.href = "/post/show/" + type
         })
     </script>
 </head>
@@ -292,20 +336,13 @@
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav navbar-left">
                     <li class="active"><a href="#" th:href="'http://www.huanforum.com'">首页</a></li>
-                    <li><a href="#">下载</a></li>
+<!--                    <li><a href="#">下载</a></li>-->
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-
-                    <form class="navbar-form navbar-left" role="search" style="margin-right:10px">
-                        <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Vue" style="width:300px ">
-                        </div>
-                        <button type="submit" class="btn btn-default">提交</button>
-                    </form>
                     <li><a href="http://www.huanforum.com/user/manage/page">我的</a></li>
-                    <li><a href="http://www.huanforum.com/personal/star/page">收藏</a></li>
-                    <li><a href="http://www.huanforum.com/personal/activity/page">动态</a></li>
-                    <li><a href="http://www.huanforum.com/personal/message/page">消息</a></li>
+                    <li><a href="http://www.huanforum.com/user/personal/star/page">收藏</a></li>
+                    <li><a href="http://www.huanforum.com/user/personal/activity/page">动态</a></li>
+                    <li><a href="http://www.huanforum.com/user/personal/message/page">消息</a></li>
                 </ul>
             </div>
         </div>
@@ -317,18 +354,18 @@
                     <div class="div-left-top1">
                         <h4 class="pull-left" style="font-weight:bold;margin-top: 11px;">&nbsp;&nbsp;周飙升榜</h4>
                         <h5 class="pull-right" style="margin-top: 14px;margin-right: 20px;color:#888;cursor: pointer;">
-                            更多</h5>
+                            </h5>
                     </div>
                     <div class="div-left-bottom">
                         <div th:each="weekHotUser : ${weekHotUsers}" class="media div-left-bottom-in" style="width:25% ;float:left">
                             <div class="media-left">
                                 <th:block th:if="${weekHotUser.headUrl == null}">
                                     <img src="https://static.runoob.com/images/mix/img_avatar.png" class="media-object"
-                                         style="width:90px">
+                                         style="width:90px; height: 90px">
                                 </th:block>
                                 <th:block th:if="${weekHotUser.headUrl != null}">
                                     <img th:src="${weekHotUser.headUrl}" class="media-object"
-                                         style="width:90px">
+                                         style="width:90px; height: 90px">
                                 </th:block>
                             </div>
                             <div class="media-body">
@@ -345,21 +382,21 @@
                     <div class="div2-left-top1">
                         <h4 class="pull-left" style="font-weight:bold;margin-top: 11px;">&nbsp;&nbsp;热帖</h4>
                         <h5 class="pull-right" style="margin-top: 14px;margin-right: 20px;color:#888;cursor: pointer;">
-                            更多</h5>
+                            </h5>
                     </div>
                     <div class="">
                         <table class="table table-hover">
                             <thead>
-                                <tr>
-                                    <th class="div2-left-bottom-td">标题</th>
-                                    <th>类型</th>
-                                    <th>提问人</th>
-                                    <th>回复数</th>
-                                </tr>
+                            <tr>
+                                <th style="font-weight: lighter;color: #9d9d9d" class="div2-left-bottom-td">标题</th>
+                                <th style="font-weight: lighter;color: #9d9d9d">类型</th>
+                                <th style="font-weight: lighter;color: #9d9d9d">提问人</th>
+                                <th style="font-weight: lighter;color: #9d9d9d">回复数</th>
+                            </tr>
                             </thead>
                             <tbody>
                                 <tr th:each="weekHotPost : ${weekHotPosts}" class="div2-left-bottom-tr">
-                                    <td th:text="${weekHotPost.title}">Tanmay</td>
+                                    <td class="post-title div2-left-bottom-tr" th:id="${weekHotPost.postId}" th:text="${weekHotPost.title}">Tanmay</td>
                                     <td style="color: cornflowerblue" th:text="${weekHotPost.type}">Bangalore</td>
                                     <td th:text="${weekHotPost.name}">560001</td>
                                     <td th:text="${weekHotPost.replies}">560001</td>
@@ -390,35 +427,30 @@
                     <div class="div-right-top-center">
                         <div class="">
                             <a class="list-group-item active">论贴分类</a>
-                            <a href="#" class="list-group-item">
-                                <span class="text-right">></span>
+                            <a href="post/show/1" class="list-group-item">
+                                <img src="img/jiantouhui.png" class="text-right"/>
                                 技术交流
                             </a>
-                            <a href="#" class="list-group-item">
-                                <span class="text-right">></span>
+                            <a href="post/show/2" class="list-group-item">
+                                <img src="img/jiantouhui.png" class="text-right"/>
                                 校闻趣事
                             </a>
-                            <a href="#" class="list-group-item">
-                                <span class="text-right">></span>
+                            <a href="post/show/3" class="list-group-item">
+                                <img src="img/jiantouhui.png" class="text-right"/>
                                 社团活动
                             </a>
-                            <a href="#" class="list-group-item">
-                                <span class="text-right">></span>
+                            <a href="post/show/4" class="list-group-item">
+                                <img src="img/jiantouhui.png" class="text-right"/>
                                 校园一角
                             </a>
-                            <a href="#" class="list-group-item">
-                                <span class="text-right">></span>
+                            <a href="post/show/5" class="list-group-item">
+                                <img src="img/jiantouhui.png" class="text-right"/>
                                 美食佳肴
                             </a>
-                            <a href="#" class="list-group-item">
-                                <span class="text-right">></span>
+                            <a href="post/show/6" class="list-group-item">
+                                <img src="img/jiantouhui.png" class="text-right"/>
                                 政史评谈
                             </a>
-                            <!--                            <a href="#" class="list-group-item">-->
-                            <!--                                <span class="text-left2">7</span>-->
-                            <!--                                的风格风格的-->
-                            <!--                            </a>-->
-
                         </div>
                     </div>
                     <div class="div-right-top-bottom" id="toPost">

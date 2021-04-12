@@ -21,7 +21,7 @@ import java.util.List;
 public class StartUpEvent implements ApplicationRunner {
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate redisTemplate;
 
     @Autowired
     private UserDetailService userDetailService;
@@ -34,7 +34,7 @@ public class StartUpEvent implements ApplicationRunner {
      */
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("启动时进行系统常用的用户初始数据缓存操作 -- 是否先于 @PostConstruct 注解执行？");
+        // log.info("启动时进行系统常用的用户初始数据缓存操作 -- 是否先于 @PostConstruct 注解执行？");
         // 粉丝数、总访问量、周访问量
         // 1、查询所有用户相关的上述信息
         List<UserDetail> userSimples = userDetailService.listUserSimples();

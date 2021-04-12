@@ -38,7 +38,7 @@ public class PortalUserInfoTask {
      */
     @Scheduled(cron = "0 */30 * * * ?")
     public void updUserSimpleInfo2DbFromRedis() {
-        // log.info("测试增加第三名用户的人气 -- 定时执行");
+        // log.info("执行粉丝、访问量刷库");
         // redisTemplate.opsForZSet().incrementScore("user:week:rank", 1327685513, 1);
 
         // 取出缓存中用户简要信息

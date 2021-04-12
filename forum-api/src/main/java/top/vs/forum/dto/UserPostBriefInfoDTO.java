@@ -15,6 +15,21 @@ public class UserPostBriefInfoDTO {
     private Long postId;
 
     /**
+     * 发帖人id
+     */
+    private Integer userId;
+
+    /**
+     * 名称
+     */
+    private String name;
+
+    /**
+     * 头像
+     */
+    private String headUrl;
+
+    /**
      * 论帖标题
      */
     private String title;

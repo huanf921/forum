@@ -1,12 +1,15 @@
 package top.vs.forum.api;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 import top.vs.forum.dto.ResultDTO;
 import top.vs.forum.dto.UserBriefInfoDTO;
 import top.vs.forum.dto.UserDetailInfoDTO;
 import top.vs.forum.dto.UserSimpleDTO;
+import top.vs.forum.po.Activity;
+import top.vs.forum.po.Message;
+
+import java.util.List;
 
 @FeignClient("forum-user")
 public interface ForumUserFeignClient {
@@ -50,4 +53,25 @@ public interface ForumUserFeignClient {
      */
     @GetMapping("/get/user/head/url/{userId}")
     ResultDTO<String> getUserHeadUrl(@PathVariable("userId") Integer userId);
+
+    /**
+     * 为粉丝新增动态
+     * @return
+     */
+    @PostMapping("/save/fan/activity")
+    ResultDTO saveFanActivity(@RequestBody Activity activity);
+
+    /**
+     * 为操作（关注、点赞、回复）对象用户新增消息
+     */
+    @PostMapping("/save/to/user/message")
+    ResultDTO saveToUserMessage(@RequestBody Message message);
+
+    /**
+     * 返回粉丝id列表
+     * @param userId
+     * @return
+     */
+    @GetMapping("/get/user/fans/{userId}")
+    ResultDTO<List<Integer>> getUserFans(@PathVariable("userId") Integer userId);
 }

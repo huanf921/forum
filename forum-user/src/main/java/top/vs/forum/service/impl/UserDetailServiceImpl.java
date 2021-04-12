@@ -149,6 +149,7 @@ public class UserDetailServiceImpl extends ServiceImpl<UserDetailMapper, UserDet
 
     @Override
     public void updRedisUserVisits(Integer userId) {
+        // log.warn("访问"+userId+"空间，人气+1");
         UserSimpleRedisDTO userSimpleRedisDTO = (UserSimpleRedisDTO) redisTemplate.opsForHash().get("user:simple:info", userId);
         // 由于是反序列化出来的一个新对象，所以改变值之后还需要设置回去
         userSimpleRedisDTO.setWeekVisits(userSimpleRedisDTO.getWeekVisits() + 1);

@@ -1,5 +1,6 @@
 package top.vs.forum.service;
 
+import top.vs.forum.dto.UserLikeDTO;
 import top.vs.forum.po.UserLike;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +14,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface UserLikeService extends IService<UserLike> {
 
+    boolean hasThumbPostOrCommentOrReply(UserLikeDTO userLikeDTO);
+
+    void userThumb(UserLikeDTO userLikeDTO);
 }

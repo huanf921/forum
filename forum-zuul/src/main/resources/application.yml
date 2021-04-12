@@ -7,7 +7,7 @@ spring:
     store-type: redis
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql:///forum?useSSL=false&&serverTimezone=UTC
+    url: jdbc:mysql:///forum?useSSL=false&&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
 eureka:
@@ -21,9 +21,6 @@ zuul:
     forum-identification:
       service-id: forum-identification
       path: /** # 这里一定要使用两个“*”号，不然“/”路径后面的多层路径将无法访问，各种样式之类的静态文件也就无法加载
-    forum-personal:
-      service-id: forum-personal
-      path: /personal/**
     forum-post:
       service-id: forum-post
       path: /post/**
