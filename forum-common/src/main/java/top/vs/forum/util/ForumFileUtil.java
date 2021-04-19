@@ -32,8 +32,4 @@ public class ForumFileUtil {
         return new File(saveDir, randomFileName);
     }
 
-    // TODO: 2021/3/31 文件路径，文件名 -- 文件删除方法
-
-
-    // TODO: 2021/4/5 文件下载方法 response 文件路径 文件名
 }

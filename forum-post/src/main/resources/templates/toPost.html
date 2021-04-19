@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <!-- 富文本css -->
     <link href="css/index.css" rel="stylesheet">
-    <link href="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.css" rel="stylesheet">
+    <link href="css/prettify.css" rel="stylesheet">
     <!-- <link href="bootstrap-combined.no-icons.min.css" rel="stylesheet"> -->
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
     <link href="css/font-awesome.css" rel="stylesheet">
@@ -144,7 +144,9 @@
                 let userId = [[${session.loginUser.id}]]
                 let formData = new FormData()
                 formData.append("userId", userId)
-                formData.append("postFile", $("#postFile")[0].files[0])
+                let postFile = $("#postFile")[0].files[0]
+                if (postFile != undefined)
+                    formData.append("postFile", postFile)
                 formData.append("title", $("#title").val())
                 formData.append("content", $("#editor").html())
                 formData.append("type", $("#control").val())
@@ -182,8 +184,8 @@
 
                     },
                     "error":function(response){
-                        layer.msg("发布论帖失败：" + res.status)
-                        console.log("发布论帖失败，错误信息：" + res.statusText)
+                        layer.msg("发布论帖失败：" + response.status)
+                        console.log("发布论帖失败，错误信息：" + response.statusText)
                     }
                 });
             });

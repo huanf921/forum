@@ -111,9 +111,11 @@ public class UserDetailController {
      * @return
      */
     @GetMapping("/save/user/detail/info/{userId}")
+    @ResponseBody
     public ResultDTO saveUserDetailInfo(@PathVariable("userId") Integer userId){
         UserDetail userDetail = new UserDetail();
         try {
+            userDetail.setUserId(userId);
             userDetail.setHeadUrl("https://static.runoob.com/images/mix/img_avatar.png");
             userDetailService.save(userDetail);
             return ResultDTO.ok();

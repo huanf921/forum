@@ -75,6 +75,7 @@
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+            cursor: pointer;
         }
 
         .div-left-bottom-in-sum1 {
@@ -317,6 +318,10 @@
 
             window.location.href = "/post/show/" + type
         })
+        $(document).on('click', '.GZbutton', function (){
+            window.location.href = "/post/show/" + 1
+        })
+
     </script>
 </head>
 <body>
@@ -361,11 +366,11 @@
                             <div class="media-left">
                                 <th:block th:if="${weekHotUser.headUrl == null}">
                                     <img src="https://static.runoob.com/images/mix/img_avatar.png" class="media-object"
-                                         style="width:90px; height: 90px">
+                                         style="width:90px; height: 90px; cursor: pointer">
                                 </th:block>
                                 <th:block th:if="${weekHotUser.headUrl != null}">
                                     <img th:src="${weekHotUser.headUrl}" class="media-object"
-                                         style="width:90px; height: 90px">
+                                         style="width:90px; height: 90px; cursor: pointer">
                                 </th:block>
                             </div>
                             <div class="media-body">
@@ -397,7 +402,7 @@
                             <tbody>
                                 <tr th:each="weekHotPost : ${weekHotPosts}" class="div2-left-bottom-tr">
                                     <td class="post-title div2-left-bottom-tr" th:id="${weekHotPost.postId}" th:text="${weekHotPost.title}">Tanmay</td>
-                                    <td style="color: cornflowerblue" th:text="${weekHotPost.type}">Bangalore</td>
+                                    <td style="color: cornflowerblue" th:text="${weekHotPost.type}" class="post-type">Bangalore</td>
                                     <td th:text="${weekHotPost.name}">560001</td>
                                     <td th:text="${weekHotPost.replies}">560001</td>
                                 </tr>

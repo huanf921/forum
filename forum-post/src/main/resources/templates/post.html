@@ -736,11 +736,8 @@
                 let code = responseData.code;
                 if (code === "200") {
                     let data = responseData.data;
-                    // console.log(data);
                     testboke.pages = data.pages == 0 ? 1 : data.pages;
                     testboke.records = data.records;
-                    // console.log(data.records)
-                    // console.log(testboke.records)
                     testboke.title = data.title;
                     testboke.total = data.total;
                     testboke.current = [[${current}]];
